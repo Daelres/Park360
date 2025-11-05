@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asistenica', function (Blueprint $table) {
+        Schema::create('asistencia', function (Blueprint $table) {
             $table->id();
             $table->foreignId('empleado_id')->constrained('empleado');
             $table->foreignId('turno_id')->constrained('turno');
-            $table->date('check_in_at');
-            $table->date('check_out_at');
-            $table->string('metodo');
+            $table->dateTime('check_in_at');
+            $table->dateTime('check_out_at')->nullable();
+            $table->string('metodo', 50)->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asistenica');
+        Schema::dropIfExists('asistencia');
     }
 };

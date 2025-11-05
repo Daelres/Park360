@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('user_rol', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('_rol_id')->constrained('_rol');
+            $table->foreignId('usuario_id')->constrained('usuarios');
+            $table->foreignId('rol_id')->constrained('rol');
             $table->timestamps();
+            $table->unique(['usuario_id', 'rol_id']);
         });
     }
 

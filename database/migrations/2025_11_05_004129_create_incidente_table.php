@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('incidente', function (Blueprint $table) {
             $table->id();
             $table->foreignId('atraccion_id')->constrained('atraccion');
-            $table->foreignId('reportado_por')->constrained('usuarios');
-            $table->string('tipo');
-            $table->string('severidad');
-            $table->string('descripcion');
-            $table->date('inicio_at');
-            $table->date('fin_at');
-            $table->string('estado');
+            $table->foreignId('reportado_por_id')->constrained('usuarios');
+            $table->string('tipo', 50);
+            $table->string('severidad', 30);
+            $table->text('descripcion')->nullable();
+            $table->dateTime('inicio_at');
+            $table->dateTime('fin_at')->nullable();
+            $table->string('estado', 30);
             $table->timestamps();
         });
     }

@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('empleado', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('usuarios');
-            $table->string('documento');
-            $table->string('cargo');
-            $table->string('area');
-            $table->date('fecha_ingreso');
+            $table->foreignId('usuario_id')->constrained('usuarios');
+            $table->string('documento', 50)->unique();
+            $table->string('cargo', 100)->nullable();
+            $table->string('area', 100)->nullable();
+            $table->date('fecha_ingreso')->nullable();
             $table->timestamps();
         });
     }

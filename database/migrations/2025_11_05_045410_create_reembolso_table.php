@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('reembolso', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pago_id')->constrained('pago');
-            $table->decimal('monto',8,2);
-            $table->string('motivo');
-            $table->string('estado');
-            $table->date('requested_at');
-            $table->date('confirmed_at');
+            $table->decimal('monto', 10, 2);
+            $table->string('motivo', 255)->nullable();
+            $table->string('estado', 30);
+            $table->dateTime('requested_at');
+            $table->dateTime('confirmed_at')->nullable();
             $table->timestamps();
         });
     }

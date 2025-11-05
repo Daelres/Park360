@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('permiso_rol', function (Blueprint $table) {
             $table->id();
             $table->foreignId('permiso_id')->constrained('permiso');
+            $table->foreignId('rol_id')->constrained('rol');
             $table->timestamps();
+            $table->unique(['permiso_id', 'rol_id']);
         });
     }
 

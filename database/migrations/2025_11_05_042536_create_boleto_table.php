@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('orden_id')->constrained('orden');
             $table->foreignId('tipo_ticket_id')->constrained('tipo_ticket');
-            $table->string('qr_code');
-            $table->string('estado');
-            $table->date('valido_desde');
-            $table->date('valido_hasta');
+            $table->string('qr_code', 191)->unique();
+            $table->string('estado', 30);
+            $table->date('valido_desde')->nullable();
+            $table->date('valido_hasta')->nullable();
             $table->timestamps();
         });
     }

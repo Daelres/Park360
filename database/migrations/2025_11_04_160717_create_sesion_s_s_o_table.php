@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('sesion_s_s_o', function (Blueprint $table) {
             $table->id();
             $table->foreignId('usuario_id')->constrained('usuarios');
-            $table->string('Proveedor', 100);
-            $table->string('oidc_sub', 255);
-            $table->timestamp('exp_at');
-            $table->string('refresh_iti', 100);
+            $table->string('proveedor', 50);
+            $table->string('oidc_sub', 191);
+            $table->dateTime('exp_at');
+            $table->string('refresh_token', 191)->nullable();
             $table->timestamps();
+            $table->index(['usuario_id', 'proveedor']);
         });
     }
 

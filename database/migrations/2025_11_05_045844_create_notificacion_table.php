@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('notificacion', function (Blueprint $table) {
             $table->id();
-            $table->string('tipo');
-            $table->string('origen');
-            $table->jsonb('payload');
+            $table->string('tipo', 50);
+            $table->string('origen', 50)->nullable();
+            $table->json('payload');
             $table->timestamps();
         });
     }

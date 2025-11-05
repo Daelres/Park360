@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_estado_atraccion', function (Blueprint $table) {
+        Schema::create('estado_atraccion', function (Blueprint $table) {
             $table->id();
             $table->foreignId('atraccion_id')->constrained('atraccion');
-            $table->string('estado');
-            $table->date('desde');
-            $table->date('hasta');
-            $table->string('motivo');
-            $table->foreignId('registrado_por')->constrained('usuarios');
+            $table->string('estado', 30);
+            $table->dateTime('desde');
+            $table->dateTime('hasta')->nullable();
+            $table->string('motivo', 255)->nullable();
+            $table->foreignId('registrado_por_id')->constrained('usuarios');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('_estado_atraccion');
+        Schema::dropIfExists('estado_atraccion');
     }
 };

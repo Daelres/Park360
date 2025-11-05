@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('orden_item', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orden');
+            $table->foreignId('orden_id')->constrained('orden');
             $table->foreignId('tipo_ticket_id')->constrained('tipo_ticket');
-            $table->integer('cantidad');
-            $table->decimal('precio_unitario', 8, 2);
-            $table->decimal('impuestos', 8, 2);
-            $table->decimal('descuento', 8, 2);
+            $table->unsignedSmallInteger('cantidad');
+            $table->decimal('precio_unitario', 10, 2);
+            $table->decimal('impuestos', 10, 2)->default(0);
+            $table->decimal('descuento', 10, 2)->default(0);
             $table->timestamps();
         });
     }

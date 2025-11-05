@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('orden_id')->constrained('orden');
             $table->foreignId('pago_id')->constrained('pago');
-            $table->jsonb('payload');
-            $table->string('event_type');
-            $table->date('recived_at');
-            $table->boolean('firma_valida');
-            $table->string('replay_id');
+            $table->json('payload');
+            $table->string('event_type', 50);
+            $table->dateTime('received_at');
+            $table->boolean('firma_valida')->default(false);
+            $table->string('replay_id', 100)->nullable();
             $table->timestamps();
         });
     }

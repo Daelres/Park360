@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('check_in', function (Blueprint $table) {
             $table->id();
             $table->foreignId('boleto_id')->constrained('boleto');
-            $table->foreignId('acceso_por')->constrained('empleado');
-            $table->date('escaneado_at');
-            $table->string('punto_acceso');
-            $table->string('resultado');
+            $table->foreignId('acceso_por_id')->constrained('empleado');
+            $table->dateTime('escaneado_at');
+            $table->string('punto_acceso', 100)->nullable();
+            $table->string('resultado', 30);
             $table->timestamps();
         });
     }

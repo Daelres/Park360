@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('turno', function (Blueprint $table) {
             $table->id();
             $table->foreignId('empleado_id')->constrained('empleado');
-            $table->date('inicio_at');
-            $table->date('fin_at');
-            $table->string('rol_turno');
+            $table->dateTime('inicio_at');
+            $table->dateTime('fin_at')->nullable();
+            $table->string('rol_turno', 50)->nullable();
             $table->timestamps();
         });
     }

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('atraccion_id')->constrained('atraccion');
             $table->date('inicio');
-            $table->date('fin');
-            $table->string('tipo');
+            $table->date('fin')->nullable();
+            $table->string('tipo', 50);
             $table->timestamps();
         });
     }

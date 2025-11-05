@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('lectura_cola', function (Blueprint $table) {
             $table->id();
             $table->foreignId('atraccion_id')->constrained('atraccion');
-            $table->integer('personas_en_cola');
-            $table->integer('tiempos_de_espera');
-            $table->string('fuente');
+            $table->unsignedSmallInteger('personas_en_cola')->default(0);
+            $table->unsignedSmallInteger('tiempo_espera_min')->default(0);
+            $table->string('fuente', 50)->nullable();
             $table->timestamps();
+            $table->index(['atraccion_id', 'created_at']);
         });
     }
 

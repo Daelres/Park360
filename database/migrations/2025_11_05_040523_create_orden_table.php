@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('orden', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained('cliente');
-            $table->string('numero_orden');
-            $table->string('estado');
-            $table->integer('total');
-            $table->string('canal');
-            $table->string('ip_cliente');
+            $table->foreignId('cliente_id')->constrained('cliente');
+            $table->string('numero_orden', 50)->unique();
+            $table->string('estado', 30);
+            $table->decimal('total', 10, 2);
+            $table->string('canal', 50)->nullable();
+            $table->string('ip_cliente', 45)->nullable();
             $table->timestamps();
         });
     }
