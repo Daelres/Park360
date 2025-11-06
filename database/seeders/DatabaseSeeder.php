@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +15,37 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Opcional: deshabilitar checks de FK en desarrollo para reseed limpio (MySQL)
+        try {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        } catch (\Throwable $e) {
+            // Ignorar si el motor no soporta este flag (p.ej. SQLite/Postgres)
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            RolSeeder::class,
+            PermisoSeeder::class,
+            ZonaSeeder::class,
+            AtraccionSeeder::class,
+            TipoTicketSeeder::class,
+            UsuarioSeeder::class,
+            EmpleadoSeeder::class,
+            PermisoRolSeeder::class,
+            UserRolSeeder::class,
+            ClienteSeeder::class,
+            OrdenSeeder::class,
+            OrdenItemSeeder::class,
+            BoletoSeeder::class,
+            CheckInSeeder::class,
+            NotificacionSeeder::class,
+            NotificacionDestinoSeeder::class,
+            PreferenciaNotificacionSeeder::class,
+            SesionSSOSeeder::class,
         ]);
+
+        try {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        } catch (\Throwable $e) {
+        }
     }
 }
