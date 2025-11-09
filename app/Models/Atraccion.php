@@ -15,15 +15,25 @@ class Atraccion extends Model
 
     protected $fillable = [
         'zona_id',
+        'sede_id',
         'nombre',
+        'descripcion',
+        'tipo',
+        'altura_minima',
         'capacidad',
         'estado_operativo',
         'ubicacion_gps',
+        'imagen_url',
     ];
 
     public function zona(): BelongsTo
     {
         return $this->belongsTo(Zona::class, 'zona_id');
+    }
+
+    public function sede(): BelongsTo
+    {
+        return $this->belongsTo(Sede::class, 'sede_id');
     }
 
     public function calendarios(): HasMany
