@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('mantenimiento', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('atractivo_id')->constrained('atraccion');
+            $table->unsignedBigInteger('atractivo_id');
             $table->string('tipo');
             $table->date('inicio_programado');
             $table->date('fin_programado');
@@ -22,6 +22,15 @@ return new class extends Migration {
             $table->string('estado');
             $table->timestamps();
         });
+
+        if (Schema::hasTable('atraccion')) {
+            Schema::table('mantenimiento', function (Blueprint $table) {
+                $table->foreign('atractivo_id')
+                    ->references('id')
+                    ->on('atraccion')
+                    ->cascadeOnDelete();
+            });
+        }
     }
 
     /**
@@ -29,6 +38,22 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        if (Schema::hasTable('mantenimiento')) {
+            try {
+                Schema::table('mantenimiento', function (Blueprint $table) {
+                    if (Schema::hasColumn('mantenimiento', 'atractivo_id')) {
+                        $table->dropForeign(['atractivo_id']);
+                    }
+
+                    if (Schema::hasColumn('mantenimiento', 'responsable')) {
+                        $table->dropForeign(['responsable']);
+                    }
+                });
+            } catch (\Throwable $e) {
+                // Ignore if the foreign key was not created on this platform.
+            }
+        }
+
         Schema::dropIfExists('mantenimiento');
     }
 };

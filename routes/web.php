@@ -13,6 +13,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\VisitCheckInController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
+
+if (function_exists('config') && config('app.force_https')) {
+    URL::forceRootUrl(config('app.url'));
+    URL::forceScheme('https');
+}
 
 Route::get('/', [PublicController::class, 'index'])->name('public.home');
 Route::get('/atracciones/{atraccion}', [PublicController::class, 'showAtraccion'])->name('public.atracciones.show');
@@ -31,9 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/visitas/scan', [VisitCheckInController::class, 'create'])->name('visit-scan.create');
     Route::post('/visitas/scan', [VisitCheckInController::class, 'store'])->name('visit-scan.store');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware(['verified', 'role:admin|employee'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'show'])
+        ->middleware(['verified', 'role:admin|employee'])
+        ->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -46,7 +52,7 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::redirect('/', '/admin/sedes');
     Route::get('/users/myProfile', [AdminUsersController::class, 'index'])->name('myProfile');
     // Gestión de usuarios, roles y permisos
@@ -61,7 +67,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 });
 
 // Reportes: accesible para cualquier usuario autenticado (no requiere rol admin)
-Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('reportes', AdminReporteController::class)->parameters(['reportes' => 'reporte']);
 });
 

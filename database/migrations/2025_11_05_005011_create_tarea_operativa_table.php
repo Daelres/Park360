@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('tarea_operativa', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('atractivo_id')->constrained('atraccion');
+            $table->unsignedBigInteger('atractivo_id');
             $table->foreignId('asignada_a')->constrained('users');
             $table->string('titulo');
             $table->string('prioridad');
@@ -22,6 +22,15 @@ return new class extends Migration {
             $table->date('vencimiento_at');
             $table->timestamps();
         });
+
+        if (Schema::hasTable('atraccion')) {
+            Schema::table('tarea_operativa', function (Blueprint $table) {
+                $table->foreign('atractivo_id')
+                    ->references('id')
+                    ->on('atraccion')
+                    ->cascadeOnDelete();
+            });
+        }
     }
 
     /**
@@ -29,6 +38,22 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        if (Schema::hasTable('tarea_operativa')) {
+            try {
+                Schema::table('tarea_operativa', function (Blueprint $table) {
+                    if (Schema::hasColumn('tarea_operativa', 'atractivo_id')) {
+                        $table->dropForeign(['atractivo_id']);
+                    }
+
+                    if (Schema::hasColumn('tarea_operativa', 'asignada_a')) {
+                        $table->dropForeign(['asignada_a']);
+                    }
+                });
+            } catch (\Throwable $e) {
+                // Ignore missing constraints on databases without FK support.
+            }
+        }
+
         Schema::dropIfExists('tarea_operativa');
     }
 };
