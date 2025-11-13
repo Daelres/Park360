@@ -107,4 +107,36 @@ class User extends Authenticatable
     {
         return $this->hasMany(TareaOperativa::class, 'asignada_a_user_id');
     }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()->where('nombre', $role)->exists();
+    }
+
+    /**
+     * @param iterable<string> $roles
+     */
+    public function hasAnyRole(iterable $roles): bool
+    {
+        $roleNames = collect($roles)
+            ->map(fn (string $role) => trim($role))
+            ->filter()
+            ->values();
+
+        if ($roleNames->isEmpty()) {
+            return false;
+        }
+
+        return $this->roles()->whereIn('nombre', $roleNames)->exists();
+    }
+
+    public function assignRole(string $role): void
+    {
+        $roleId = Rol::query()->where('nombre', $role)->value('id');
+
+        if ($roleId) {
+            $this->roles()->syncWithoutDetaching([$roleId]);
+            $this->unsetRelation('roles');
+        }
+    }
 }

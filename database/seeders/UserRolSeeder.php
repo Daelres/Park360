@@ -22,18 +22,26 @@ class UserRolSeeder extends Seeder
                 'updated_at' => $now,
             ];
         }
-        if (isset($usuarios['operador@park360.test'], $roles['operador'])) {
+        if (isset($usuarios['operador@park360.test'], $roles['employee'])) {
             $rows[] = [
                 'user_id' => $usuarios['operador@park360.test'],
-                'rol_id' => $roles['operador'],
+                'rol_id' => $roles['employee'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
         }
-        if (isset($usuarios['ventas@park360.test'], $roles['ventas'])) {
+        if (isset($usuarios['ventas@park360.test'], $roles['employee'])) {
             $rows[] = [
                 'user_id' => $usuarios['ventas@park360.test'],
-                'rol_id' => $roles['ventas'],
+                'rol_id' => $roles['employee'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+        if (isset($usuarios['cliente@park360.test'], $roles['client'])) {
+            $rows[] = [
+                'user_id' => $usuarios['cliente@park360.test'],
+                'rol_id' => $roles['client'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ];

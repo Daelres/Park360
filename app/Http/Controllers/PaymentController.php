@@ -12,8 +12,17 @@ class PaymentController extends Controller
     {
         $preselectedPlan = $request->string('plan')->toString();
 
+        $customer = null;
+        if ($request->user()) {
+            $customer = [
+                'name' => $request->user()->name,
+                'email' => $request->user()->email,
+            ];
+        }
+
         return view('payments.create', [
             'plan' => $preselectedPlan,
+            'customer' => $customer,
         ]);
     }
 
@@ -26,6 +35,14 @@ class PaymentController extends Controller
             'monto' => ['required', 'numeric', 'min:0'],
             'metodo_pago' => ['required', 'string', 'max:255'],
         ]);
+
+        if ($request->user()) {
+            $validated['nombre'] = $request->user()->name;
+            $validated['correo'] = $request->user()->email;
+        } else {
+            $validated['nombre'] = $request->string('nombre')->toString();
+            $validated['correo'] = $request->string('correo')->toString();
+        }
 
         // La integración con PayU se implementará en el futuro.
         // Por ahora, se deja registro en el log para facilitar la futura implementación.
