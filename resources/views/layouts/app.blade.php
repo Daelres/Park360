@@ -4,94 +4,167 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Park360</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1d4ed8;
+            --primary: #2563eb;
             --primary-dark: #1e3a8a;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-600: #4b5563;
+            --secondary: #f97316;
+            --gray-50: #f8fafc;
+            --gray-100: #e2e8f0;
+            --gray-600: #475569;
+            --card-radius: 1.25rem;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
-            font-family: 'Nunito', Arial, sans-serif;
-            background: var(--gray-100);
-            color: #111827;
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #eff6ff 0%, #fff 35%, #f8fafc 100%);
+            color: #0f172a;
+            min-height: 100vh;
+            display: flex;
         }
 
-        a { color: inherit; text-decoration: none; }
+        .app-shell {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
 
         header {
-            background: white;
-            border-bottom: 1px solid var(--gray-200);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
             padding: 1rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 20;
         }
 
         .logo {
             font-weight: 700;
-            font-size: 1.25rem;
-            color: var(--primary);
+            font-size: 1.35rem;
+            letter-spacing: 0.02em;
+            color: var(--primary-dark);
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
         }
 
         nav a {
-            margin-left: 1rem;
-            font-weight: 600;
+            font-weight: 500;
             color: var(--gray-600);
+            padding-bottom: 0.25rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        nav a:hover {
+        nav a:hover,
+        nav a:focus-visible {
             color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-pill {
+            background: #1d4ed8;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.25;
+            font-size: 0.85rem;
         }
 
         main {
-            padding: 2rem;
+            flex: 1;
+            padding: 3rem 1.5rem 4rem;
+        }
+
+        .site-container {
             max-width: 1200px;
             margin: 0 auto;
         }
 
         .card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+            background: #fff;
+            border-radius: var(--card-radius);
+            padding: 1.75rem;
+            box-shadow: 0 30px 60px rgba(15, 23, 42, 0.08);
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 0.35rem;
             padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
+            border-radius: 999px;
             background: var(--primary);
-            color: white;
+            color: #fff;
             font-weight: 600;
             border: none;
             cursor: pointer;
             transition: background 0.2s ease;
         }
 
-        .btn.secondary {
-            background: var(--gray-200);
-            color: #111827;
+        .btn:hover,
+        .btn:focus-visible {
+            background: var(--primary-dark);
         }
 
-        .btn:hover {
-            background: var(--primary-dark);
+        .btn.ghost {
+            background: rgba(37, 99, 235, 0.12);
+            color: var(--primary);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+        }
+
+        .btn.ghost:hover,
+        .btn.ghost:focus-visible {
+            background: rgba(37, 99, 235, 0.2);
         }
 
         .flash-message {
             background: #ecfccb;
-            color: #3f6212;
-            border: 1px solid #a3e635;
+            color: #1a2e05;
+            border: 1px solid #bef264;
             padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
+            border-radius: 0.85rem;
             margin-bottom: 1.5rem;
+        }
+
+        .flash-error {
+            background: #fee2e2;
+            border-color: #fecaca;
+            color: #7f1d1d;
         }
 
         form .field {
@@ -101,118 +174,115 @@
         form label {
             display: block;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
         }
 
         form input,
         form select,
         form textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
+            padding: 0.85rem 1rem;
+            border-radius: 0.85rem;
+            border: 1px solid var(--gray-100);
             font-size: 1rem;
+            background: #fff;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            border-radius: 1rem;
+            background: #fff;
+            border-radius: var(--card-radius);
             overflow: hidden;
         }
 
-        th, td {
+        th,
+        td {
             padding: 1rem;
             text-align: left;
         }
 
         th {
-            background: var(--gray-100);
+            background: var(--gray-50);
             font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         tr + tr {
-            border-top: 1px solid var(--gray-200);
+            border-top: 1px solid var(--gray-100);
         }
 
-        .table-actions {
-            display: flex;
-            gap: 0.75rem;
+        .page-title {
+            margin-bottom: 1.5rem;
         }
 
-        .badge {
-            display: inline-flex;
-            padding: 0.35rem 0.75rem;
-            border-radius: 9999px;
-            background: rgba(29, 78, 216, 0.12);
-            color: var(--primary-dark);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .grid {
-            display: grid;
-            gap: 1.5rem;
-        }
-
-        .grid-3 {
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        }
-
-        .grid-2 {
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        }
-
-        .hero {
-            background: white;
-            border-radius: 1.5rem;
+        footer {
             padding: 2rem;
-            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.12);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2rem;
-            align-items: center;
-            margin-bottom: 2rem;
+            border-top: 1px solid rgba(226, 232, 240, 0.8);
+            background: #fff;
+            text-align: center;
+            color: var(--gray-600);
         }
 
-        .hero h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
+        @media (max-width: 900px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
 
-        .select-inline {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .select-inline select {
-            width: auto;
-            min-width: 200px;
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
         }
     </style>
     @stack('styles')
 </head>
 <body>
-    <header>
-        <div class="logo">PARK <span style="color: var(--primary-dark)">360</span></div>
-        <nav>
-            <a href="{{ route('public.home') }}">Atracciones</a>
-            <a href="{{ route('public.plans') }}">Entradas</a>
-            <a href="{{ route('payments.create') }}">Pagos</a>
-            <a href="{{ route('admin.sedes.index') }}">Admin Sedes</a>
-            <a href="{{ route('admin.atracciones.index') }}">Admin Atracciones</a>
-        </nav>
-    </header>
-    <main>
-        @if (session('status'))
-            <div class="flash-message">
-                {{ session('status') }}
+    <div class="app-shell">
+        <header>
+            <div class="logo">PARK<span>360</span></div>
+            <nav>
+                <a href="{{ route('public.home') }}">Atracciones</a>
+                <a href="{{ route('public.plans') }}">Planes</a>
+                <a href="{{ route('payments.create') }}">Pagos</a>
+                <a href="{{ route('admin.sedes.index') }}">Sedes</a>
+                <a href="{{ route('admin.atracciones.index') }}">Panel</a>
+            </nav>
+            <div class="auth-actions">
+                @auth
+                    <div class="user-pill">
+                        <strong>{{ auth()->user()->name }}</strong>
+                        <span>{{ auth()->user()->email }}</span>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn ghost">Cerrar sesión</button>
+                    </form>
+                @else
+                    <a class="btn ghost" href="{{ route('login') }}">Iniciar sesión</a>
+                @endauth
             </div>
-        @endif
+        </header>
+        <main>
+            <div class="site-container">
+                @if (session('status'))
+                    <div class="flash-message">{{ session('status') }}</div>
+                @endif
 
-        @yield('content')
-    </main>
+                @if ($errors->any())
+                    <div class="flash-message flash-error">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
+                @yield('content')
+            </div>
+        </main>
+        <footer>
+            © {{ date('Y') }} Park360. Crea experiencias memorables con una vista 360° del parque.
+        </footer>
+    </div>
 </body>
 </html>
