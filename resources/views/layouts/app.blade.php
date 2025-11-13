@@ -661,13 +661,13 @@
             <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
             <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
             <a href="{{ route('admin.reportes.index') }}"><i class="fas fa-chart-bar"></i> Reportes</a>
+            <a href="{{ route('admin.analitica.index') }}"><i class="fas fa-chart-line"></i> Analítica aplicación</a>
+            <a href="{{ route('admin.users.index') }}"><i class="fas fa-users-gear"></i> Roles y permisos</a>
 
         @else
             <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
             <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
             <a href="{{ route('payments.create') }}"><i class="fas fa-shopping-cart"></i> Carrito</a>
-            <a href="{{ route('admin.reportes.index') }}"><i class="fas fa-chart-bar"></i> Reportes</a>
-
         @endif
     </nav>
     <div class="sidebar-footer">

@@ -34,11 +34,19 @@ class ReporteController extends Controller
 
         $tipos = $this->tipos();
 
+        // Métricas rápidas para la cabecera (sin romper estilos)
+        $kpis = [
+            'total' => (clone $reportes)->total(),
+            'abiertos' => Incidente::whereNull('fin_at')->count(),
+            'cerrados' => Incidente::whereNotNull('fin_at')->count(),
+        ];
+
         return view('admin.reportes.index', [
             'reportes' => $reportes,
             'search' => $search,
             'tipo' => $tipo,
             'tipos' => $tipos,
+            'kpis' => $kpis,
         ]);
     }
 

@@ -9,6 +9,30 @@
         <a class="btn" href="{{ route('admin.reportes.create') }}">+ Añadir reporte</a>
     </div>
 
+    {{-- KPIs rápidos --}}
+    @isset($kpis)
+        <div class="grid grid-3" style="margin-bottom:1rem;">
+            <div class="card">
+                <div style="display:flex; align-items:center; gap:.75rem;">
+                    <div class="badge">Total</div>
+                    <strong style="font-size:1.4rem;">{{ number_format($kpis['total']) }}</strong>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display:flex; align-items:center; gap:.75rem;">
+                    <div class="badge warning">Abiertos</div>
+                    <strong style="font-size:1.4rem;">{{ number_format($kpis['abiertos']) }}</strong>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display:flex; align-items:center; gap:.75rem;">
+                    <div class="badge success">Cerrados</div>
+                    <strong style="font-size:1.4rem;">{{ number_format($kpis['cerrados']) }}</strong>
+                </div>
+            </div>
+        </div>
+    @endisset
+
     <form method="GET" action="{{ route('admin.reportes.index') }}" style="display:flex; flex-wrap:wrap; gap:1rem; margin-bottom:1rem; align-items:center;">
         <input type="text" name="search" placeholder="Buscar por código, email o tipo" value="{{ $search }}" style="flex:1 1 260px; min-width:220px;">
         <select name="tipo" style="flex:0 1 220px; min-width:200px;">
