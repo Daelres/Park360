@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tarea_operativa', function (Blueprint $table) {
             $table->id();
             $table->foreignId('atractivo_id')->constrained('atraccion');
-            $table->foreignId('asignada_a')->constrained('usuarios');
+            $table->foreignId('asignada_a')->constrained('users');
             $table->string('titulo');
             $table->string('prioridad');
             $table->string('estado');

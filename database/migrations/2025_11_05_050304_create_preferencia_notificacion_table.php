@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('preferencia_notificacion', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('usuario_id')->constrained('usuarios');
+            $table->foreignId('usuario_id')->constrained('users');
             $table->foreignId('cliente_id')->nullable()->constrained('cliente');
             $table->boolean('canal_email')->default(true);
             $table->string('horario_silencio', 50)->nullable();
