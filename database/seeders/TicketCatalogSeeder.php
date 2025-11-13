@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\AddonProduct;
+use App\Models\Sede;
 use App\Models\TicketType;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
 class TicketCatalogSeeder extends Seeder
@@ -46,11 +48,35 @@ class TicketCatalogSeeder extends Seeder
             ],
         ];
 
-        foreach ($tickets as $ticket) {
-            TicketType::updateOrCreate(
-                ['code' => $ticket['code']],
-                $ticket
-            );
+        $sedes = Sede::orderBy('id')->get();
+
+        if ($sedes->isEmpty()) {
+            return;
+        }
+
+        foreach ($sedes as $index => $sede) {
+            foreach ($tickets as $ticket) {
+                $baseProductId = $ticket['stripe_product_id']
+                    ?: sprintf('prod_%s_base', $ticket['code']);
+
+                $suffix = '_' . $sede->id;
+                $productId = $index === 0
+                    ? $baseProductId
+                    : Str::limit($baseProductId, 64 - strlen($suffix), '') . $suffix;
+
+                TicketType::updateOrCreate(
+                    ['sede_id' => $sede->id, 'code' => $ticket['code']],
+                    [
+                        'sede_id' => $sede->id,
+                        'code' => $ticket['code'],
+                        'name' => $ticket['name'],
+                        'description' => $ticket['description'],
+                        'base_price' => $ticket['base_price'],
+                        'stripe_product_id' => $productId,
+                        'stripe_price_id' => $ticket['stripe_price_id'],
+                    ]
+                );
+            }
         }
     }
 

@@ -19,6 +19,7 @@ class TicketOrder extends Model
 
     protected $fillable = [
         'user_id',
+        'sede_id',
         'visit_date_id',
         'uuid',
         'status',
@@ -33,6 +34,7 @@ class TicketOrder extends Model
     ];
 
     protected $casts = [
+        'sede_id' => 'integer',
         'total_amount' => 'integer',
         'paid_at' => 'datetime',
         'failed_at' => 'datetime',
@@ -55,6 +57,11 @@ class TicketOrder extends Model
     public function visitDate(): BelongsTo
     {
         return $this->belongsTo(VisitDate::class);
+    }
+
+    public function sede(): BelongsTo
+    {
+        return $this->belongsTo(Sede::class);
     }
 
     public function items(): HasMany
