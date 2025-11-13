@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\Admin\AtraccionController as AdminAtraccionController;
 use App\Http\Controllers\Admin\SedeController as AdminSedeController;
+use App\Http\Controllers\Admin\ReporteController as AdminReporteController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\Payments\TestCheckoutController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Payments\TestCheckoutController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\VisitCheckInController;
@@ -44,9 +46,14 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::redirect('/', '/admin/sedes');
-    Route::redirect('/profile', '/admin/profile');
+    Route::get('/users/myProfile', [AdminUsersController::class, 'index'])->name('myProfile');
     Route::resource('sedes', AdminSedeController::class);
     Route::resource('atracciones', AdminAtraccionController::class);
+});
+
+// Reportes: accesible para cualquier usuario autenticado (no requiere rol admin)
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::resource('reportes', AdminReporteController::class)->parameters(['reportes' => 'reporte']);
 });
 
 require __DIR__.'/auth.php';
