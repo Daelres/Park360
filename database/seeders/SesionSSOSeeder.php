@@ -4,40 +4,62 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SesionSSOSeeder extends Seeder
 {
     public function run(): void
     {
         $now = now();
-        $usuarios = DB::table('users')->pluck('id', 'email');
 
-        $rows = [];
-        if (isset($usuarios['admin@park360.test'])) {
-            $rows[] = [
-                'user_id' => $usuarios['admin@park360.test'],
-                'proveedor' => 'keycloak',
-                'oidc_sub' => 'sub-admin-demo',
-                'exp_at' => now()->addHours(2),
-                'refresh_token' => null,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-        }
-        if (isset($usuarios['operador@park360.test'])) {
-            $rows[] = [
-                'user_id' => $usuarios['operador@park360.test'],
-                'proveedor' => 'keycloak',
-                'oidc_sub' => 'sub-operador-demo',
-                'exp_at' => now()->addHours(2),
-                'refresh_token' => null,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+        // Obtener usuarios válidos
+        $usuarios = DB::table('users')->pluck('id')->toArray();
+
+        if (empty($usuarios)) {
+            dd("⚠ No existen usuarios para generar sesiones SSO.");
         }
 
-        if (!empty($rows)) {
-            DB::table('sesion_s_s_o')->upsert($rows, ['user_id', 'proveedor'], ['oidc_sub', 'exp_at', 'refresh_token', 'updated_at']);
+        $proveedores = [
+            'google',
+            'facebook',
+            'microsoft',
+            'github',
+            'apple'
+        ];
+
+        $sesiones = [];
+        $combinaciones = [];
+
+        for ($i = 0; $i < 120; $i++) {
+
+            $usuario = $usuarios[array_rand($usuarios)];
+            $proveedor = $proveedores[array_rand($proveedores)];
+
+            // Evitar duplicados usuario + proveedor (por el índice)
+            $key = $usuario . '-' . $proveedor;
+            if (isset($combinaciones[$key])) {
+                continue;
+            }
+            $combinaciones[$key] = true;
+
+            $expAt = now()->addHours(rand(1, 48));
+
+            $sesiones[] = [
+                'usuario_id'    => $usuario,
+                'proveedor'     => $proveedor,
+                'oidc_sub'      => Str::uuid(),
+                'exp_at'        => $expAt,
+                'refresh_token' => rand(0, 1) ? Str::random(40) : null,
+                'created_at'    => $now,
+                'updated_at'    => $now,
+            ];
+
+            // Detener cuando tengamos 120 registros válidos
+            if (count($sesiones) >= 120) {
+                break;
+            }
         }
+
+        DB::table('sesion_s_s_o')->insert($sesiones);
     }
 }
