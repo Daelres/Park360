@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AddonProduct;
+use App\Models\Sede;
 use App\Models\TicketType;
 use App\Models\VisitDate;
 use Illuminate\Http\JsonResponse;
@@ -15,13 +16,30 @@ class PaymentController extends Controller
 {
     public function create(Request $request): View
     {
+        $sedes = Sede::orderBy('nombre')->get();
+
+        $selectedSedeId = $request->integer('sede_id');
+
+        if (! $selectedSedeId && $sedes->isNotEmpty()) {
+            $selectedSedeId = $sedes->first()->id;
+        }
+
+        if ($selectedSedeId && ! $sedes->contains('id', $selectedSedeId)) {
+            $selectedSedeId = $sedes->first()?->id;
+        }
+
+        $selectedSede = $selectedSedeId ? $sedes->firstWhere('id', $selectedSedeId) : null;
+
         $visitDates = VisitDate::query()
             ->where('is_active', true)
             ->whereDate('visit_date', '>=', now()->toDateString())
             ->orderBy('visit_date')
             ->get();
 
-        $ticketTypes = TicketType::query()->orderBy('base_price')->get();
+        $ticketTypes = TicketType::query()
+            ->when($selectedSedeId, fn ($query) => $query->where('sede_id', $selectedSedeId))
+            ->orderBy('base_price')
+            ->get();
         $addonProducts = AddonProduct::query()->orderBy('price')->get();
 
         $ticketCatalog = $ticketTypes
@@ -76,6 +94,9 @@ class PaymentController extends Controller
             'addonCatalog' => $addonCatalog,
             'flashSuccess' => session('checkout_success'),
             'flashError' => session('checkout_error'),
+            'sedes' => $sedes,
+            'selectedSedeId' => $selectedSedeId,
+            'selectedSede' => $selectedSede,
         ]);
     }
 
