@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             RolSeeder::class,
             PermisoSeeder::class,
             ZonaSeeder::class,
+            SedesSeeder::class,  // Movido antes de AtraccionSeeder
             AtraccionSeeder::class,
             VisitDateSeeder::class,
             TicketCatalogSeeder::class,
@@ -51,7 +52,6 @@ class DatabaseSeeder extends Seeder
             MantenimientoSeeder::class,
             PagoSeeder::class,
             ReembolsoSeeder::class,
-            SedesSeeder::class,
             TareaOperativaSeeder::class,
             TarifaSeeder::class,
             TurnoSeeder::class,
