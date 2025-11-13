@@ -64,12 +64,12 @@
                         <td>{{ $reporte->tipo }}</td>
                         <td>
                             <div class="table-actions">
-                                <a class="btn secondary" href="{{ route('admin.reportes.show', $reporte) }}">Ver</a>
-                                <a class="btn secondary" href="{{ route('admin.reportes.edit', $reporte) }}">Editar</a>
-                                <form method="POST" action="{{ route('admin.reportes.destroy', $reporte) }}" onsubmit="return confirm('¿Eliminar reporte?');">
+                                <a href="{{ route('admin.reportes.show', $reporte) }}">👁️ Ver</a>
+                                <a href="{{ route('admin.reportes.edit', $reporte)  }}">✏️ Editar</a>
+                                <form method="POST" action="{{  route('admin.reportes.destroy', $reporte)  }}" style="display: inline;" onsubmit="return confirm('¿Eliminar reporte?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn secondary" type="submit">Eliminar</button>
+                                    <button type="submit" style="background: #FFE8E8; color: #FF6B35;">🗑️ Eliminar</button>
                                 </form>
                             </div>
                         </td>

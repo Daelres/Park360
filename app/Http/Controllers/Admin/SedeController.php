@@ -35,7 +35,9 @@ class SedeController extends Controller
 
     public function create(): View
     {
-        return view('admin.sedes.create');
+        return view('admin.sedes.create', [
+            'sede' => new Sede(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse

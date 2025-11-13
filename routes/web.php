@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ReporteController as AdminReporteController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Payments\TestCheckoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\VisitCheckInController;
