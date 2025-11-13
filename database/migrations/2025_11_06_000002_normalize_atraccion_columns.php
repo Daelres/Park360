@@ -2,99 +2,160 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('atraccion', function (Blueprint $table) {
-            if (Schema::hasColumn('atraccion', 'Nombre') && !Schema::hasColumn('atraccion', 'nombre')) {
-                $table->string('nombre', 100)->after('zona_id');
-            }
-            if (Schema::hasColumn('atraccion', 'Capacidad') && !Schema::hasColumn('atraccion', 'capacidad')) {
-                $table->integer('capacidad')->after('nombre');
-            }
-            if (Schema::hasColumn('atraccion', 'Estado Operativo') && !Schema::hasColumn('atraccion', 'estado_operativo')) {
-                $table->string('estado_operativo', 100)->after('capacidad');
-            }
-            if (Schema::hasColumn('atraccion', 'Ubicación_gps') && !Schema::hasColumn('atraccion', 'ubicacion_gps')) {
-                $table->string('ubicacion_gps', 100)->after('estado_operativo');
-            }
+        $this->renameColumnPortable('atraccion', 'Nombre', 'nombre', function (Blueprint $table) {
+            $table->string('nombre', 100)->nullable();
         });
 
-        if (Schema::hasColumn('atraccion', 'Nombre')) {
-            DB::statement('UPDATE `atraccion` SET `nombre` = `Nombre`');
-        }
-        if (Schema::hasColumn('atraccion', 'Capacidad')) {
-            DB::statement('UPDATE `atraccion` SET `capacidad` = `Capacidad`');
-        }
-        if (Schema::hasColumn('atraccion', 'Estado Operativo')) {
-            DB::statement('UPDATE `atraccion` SET `estado_operativo` = `Estado Operativo`');
-        }
-        if (Schema::hasColumn('atraccion', 'Ubicación_gps')) {
-            DB::statement('UPDATE `atraccion` SET `ubicacion_gps` = `Ubicación_gps`');
-        }
+        $this->renameColumnPortable('atraccion', 'Capacidad', 'capacidad', function (Blueprint $table) {
+            $table->integer('capacidad')->nullable();
+        });
 
-        Schema::table('atraccion', function (Blueprint $table) {
-            if (Schema::hasColumn('atraccion', 'Nombre')) {
-                $table->dropColumn('Nombre');
-            }
-            if (Schema::hasColumn('atraccion', 'Capacidad')) {
-                $table->dropColumn('Capacidad');
-            }
-            if (Schema::hasColumn('atraccion', 'Estado Operativo')) {
-                $table->dropColumn('Estado Operativo');
-            }
-            if (Schema::hasColumn('atraccion', 'Ubicación_gps')) {
-                $table->dropColumn('Ubicación_gps');
-            }
+        $this->renameColumnPortable('atraccion', 'Estado Operativo', 'estado_operativo', function (Blueprint $table) {
+            $table->string('estado_operativo', 100)->nullable();
+        });
+
+        $this->renameColumnPortable('atraccion', 'Ubicación_gps', 'ubicacion_gps', function (Blueprint $table) {
+            $table->string('ubicacion_gps', 100)->nullable();
         });
     }
 
     public function down(): void
     {
-        Schema::table('atraccion', function (Blueprint $table) {
-            if (!Schema::hasColumn('atraccion', 'Nombre') && Schema::hasColumn('atraccion', 'nombre')) {
-                $table->string('Nombre', 100)->after('zona_id');
-            }
-            if (!Schema::hasColumn('atraccion', 'Capacidad') && Schema::hasColumn('atraccion', 'capacidad')) {
-                $table->integer('Capacidad')->after('Nombre');
-            }
-            if (!Schema::hasColumn('atraccion', 'Estado Operativo') && Schema::hasColumn('atraccion', 'estado_operativo')) {
-                $table->string('Estado Operativo', 100)->after('Capacidad');
-            }
-            if (!Schema::hasColumn('atraccion', 'Ubicación_gps') && Schema::hasColumn('atraccion', 'ubicacion_gps')) {
-                $table->string('Ubicación_gps', 100)->after('Estado Operativo');
-            }
+        $this->renameColumnPortable('atraccion', 'nombre', 'Nombre', function (Blueprint $table) {
+            $table->string('Nombre', 100)->nullable();
         });
 
-        if (Schema::hasColumn('atraccion', 'nombre')) {
-            DB::statement('UPDATE `atraccion` SET `Nombre` = `nombre`');
-        }
-        if (Schema::hasColumn('atraccion', 'capacidad')) {
-            DB::statement('UPDATE `atraccion` SET `Capacidad` = `capacidad`');
-        }
-        if (Schema::hasColumn('atraccion', 'estado_operativo')) {
-            DB::statement('UPDATE `atraccion` SET `Estado Operativo` = `estado_operativo`');
-        }
-        if (Schema::hasColumn('atraccion', 'ubicacion_gps')) {
-            DB::statement('UPDATE `atraccion` SET `Ubicación_gps` = `ubicacion_gps`');
+        $this->renameColumnPortable('atraccion', 'capacidad', 'Capacidad', function (Blueprint $table) {
+            $table->integer('Capacidad')->nullable();
+        });
+
+        $this->renameColumnPortable('atraccion', 'estado_operativo', 'Estado Operativo', function (Blueprint $table) {
+            $table->string('Estado Operativo', 100)->nullable();
+        });
+
+        $this->renameColumnPortable('atraccion', 'ubicacion_gps', 'Ubicación_gps', function (Blueprint $table) {
+            $table->string('Ubicación_gps', 100)->nullable();
+        });
+    }
+
+    private function renameColumnPortable(string $table, string $from, string $to, \Closure $definition, string $primaryKey = 'id'): void
+    {
+        if (! Schema::hasTable($table) || ! $this->columnExists($table, $from)) {
+            return;
         }
 
-        Schema::table('atraccion', function (Blueprint $table) {
-            if (Schema::hasColumn('atraccion', 'nombre')) {
-                $table->dropColumn('nombre');
-            }
-            if (Schema::hasColumn('atraccion', 'capacidad')) {
-                $table->dropColumn('capacidad');
-            }
-            if (Schema::hasColumn('atraccion', 'estado_operativo')) {
-                $table->dropColumn('estado_operativo');
-            }
-            if (Schema::hasColumn('atraccion', 'ubicacion_gps')) {
-                $table->dropColumn('ubicacion_gps');
-            }
+        if ($this->columnExists($table, $to)) {
+            $this->copyColumnData($table, $from, $to, $primaryKey);
+            $this->dropColumnIfExists($table, $from);
+            return;
+        }
+
+        $driver = DB::getDriverName();
+
+        if ($driver === 'sqlite') {
+            $this->renameColumnUsingStatement($table, $from, $to, '"');
+            return;
+        }
+
+        if ($driver === 'mysql') {
+            $this->renameColumnUsingStatement($table, $from, $to, '`');
+            return;
+        }
+
+        try {
+            Schema::table($table, function (Blueprint $table) use ($from, $to) {
+                $table->renameColumn($from, $to);
+            });
+        } catch (\Throwable $e) {
+            // Give up quietly if the platform cannot rename this column.
+        }
+    }
+
+    private function dropColumnIfExists(string $table, string $column): void
+    {
+        if (! $this->columnExists($table, $column)) {
+            return;
+        }
+
+        Schema::table($table, function (Blueprint $table) use ($column) {
+            $table->dropColumn($column);
         });
+    }
+
+    private function copyColumnData(string $table, string $from, string $to, string $primaryKey): void
+    {
+        if (! $this->columnExists($table, $from) || ! $this->columnExists($table, $to)) {
+            return;
+        }
+
+        $alias = 'source_column';
+        $grammar = DB::connection()->getQueryGrammar();
+
+        DB::table($table)
+            ->select([
+                $primaryKey,
+                DB::raw($grammar->wrap($from).' as '.$alias),
+            ])
+            ->orderBy($primaryKey)
+            ->chunkById(100, function ($rows) use ($table, $primaryKey, $to, $alias) {
+                foreach ($rows as $row) {
+                    DB::table($table)
+                        ->where($primaryKey, $row->{$primaryKey})
+                        ->update([$to => $row->{$alias}]);
+                }
+            }, $primaryKey);
+    }
+
+    private function columnExists(string $table, string $column, bool $caseInsensitive = false): bool
+    {
+        if (! Schema::hasTable($table)) {
+            return false;
+        }
+
+        $columns = Schema::getColumnListing($table);
+
+        if (! $caseInsensitive) {
+            return in_array($column, $columns, true);
+        }
+
+        $target = strtolower($column);
+
+        foreach ($columns as $existing) {
+            if (strtolower($existing) === $target) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function renameColumnUsingStatement(string $table, string $from, string $to, string $quote): void
+    {
+        if (! $this->columnExists($table, $from) || $this->columnExists($table, $to)) {
+            return;
+        }
+
+        $quotedTable = $this->wrapIdentifier($table, $quote);
+        $quotedFrom = $this->wrapIdentifier($from, $quote);
+        $quotedTo = $this->wrapIdentifier($to, $quote);
+
+        try {
+            DB::statement(sprintf('ALTER TABLE %s RENAME COLUMN %s TO %s', $quotedTable, $quotedFrom, $quotedTo));
+        } catch (\Throwable $e) {
+            // If the platform rejects the statement we silently leave the column untouched.
+        }
+    }
+
+    private function wrapIdentifier(string $identifier, string $quote): string
+    {
+        $escaped = str_replace($quote, $quote.$quote, $identifier);
+
+        return $quote.$escaped.$quote;
     }
 };

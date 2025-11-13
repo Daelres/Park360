@@ -27,7 +27,6 @@ class DatabaseSeeder extends Seeder
             RolSeeder::class,
             PermisoSeeder::class,
             ZonaSeeder::class,
-            SedesSeeder::class,  // Movido antes de AtraccionSeeder
             AtraccionSeeder::class,
             VisitDateSeeder::class,
             TicketCatalogSeeder::class,
