@@ -1,5 +1,4 @@
 @php($atraccion = $atraccion ?? new \App\Models\Atraccion())
-@php($zonas = $zonas ?? collect())
 @csrf
 <div class="field">
     <label for="sede_id">Sede</label>
@@ -14,18 +13,6 @@
     @enderror
 </div>
 <div class="field">
-    <label for="zona_id">Zona</label>
-    <select name="zona_id" id="zona_id" required>
-        <option value="">Selecciona una zona</option>
-        @foreach($zonas as $id => $nombre)
-            <option value="{{ $id }}" @selected(old('zona_id', $atraccion->zona_id) == $id)>{{ $nombre }}</option>
-        @endforeach
-    </select>
-    @error('zona_id')
-        <small style="color:#dc2626;">{{ $message }}</small>
-    @enderror
-</div>
-<div class="field">
     <label for="nombre">Nombre</label>
     <input type="text" name="nombre" id="nombre" value="{{ old('nombre', $atraccion->nombre ?? '') }}" required>
     @error('nombre')
@@ -34,7 +21,13 @@
 </div>
 <div class="field">
     <label for="tipo">Tipo</label>
-    <input type="text" name="tipo" id="tipo" value="{{ old('tipo', $atraccion->tipo ?? '') }}">
+    <select name="tipo" id="tipo">
+        <option value="">Selecciona un tipo</option>
+        <option value="Extrema" @selected(old('tipo', $atraccion->tipo ?? '') == 'Extrema')>Extrema</option>
+        <option value="Infantil" @selected(old('tipo', $atraccion->tipo ?? '') == 'Infantil')>Infantil</option>
+        <option value="Familiar" @selected(old('tipo', $atraccion->tipo ?? '') == 'Familiar')>Familiar</option>
+        <option value="Interactiva/Tecnologica" @selected(old('tipo', $atraccion->tipo ?? '') == 'Interactiva/Tecnologica')>Interactiva/Tecnológica</option>
+    </select>
     @error('tipo')
         <small style="color:#dc2626;">{{ $message }}</small>
     @enderror
@@ -61,16 +54,13 @@
     @enderror
 </div>
 <div class="field">
-    <label for="estado_operativo">Estado operativo</label>
-    <input type="text" name="estado_operativo" id="estado_operativo" value="{{ old('estado_operativo', $atraccion->estado_operativo ?? 'Operativa') }}" required>
+    <label for="estado_operativo">Estado</label>
+    <select name="estado_operativo" id="estado_operativo" required>
+        <option value="">Selecciona un estado</option>
+        <option value="Operativa" @selected(old('estado_operativo', $atraccion->estado_operativo ?? '') == 'Operativa')>Operativa</option>
+        <option value="Inoperativa" @selected(old('estado_operativo', $atraccion->estado_operativo ?? '') == 'Inoperativa')>Inoperativa</option>
+    </select>
     @error('estado_operativo')
-        <small style="color:#dc2626;">{{ $message }}</small>
-    @enderror
-</div>
-<div class="field">
-    <label for="ubicacion_gps">Ubicación (GPS)</label>
-    <input type="text" name="ubicacion_gps" id="ubicacion_gps" value="{{ old('ubicacion_gps', $atraccion->ubicacion_gps ?? '') }}">
-    @error('ubicacion_gps')
         <small style="color:#dc2626;">{{ $message }}</small>
     @enderror
 </div>

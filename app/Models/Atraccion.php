@@ -14,7 +14,6 @@ class Atraccion extends Model
     protected $table = 'atraccion';
 
     protected $fillable = [
-        'zona_id',
         'sede_id',
         'nombre',
         'descripcion',
@@ -22,7 +21,6 @@ class Atraccion extends Model
         'altura_minima',
         'capacidad',
         'estado_operativo',
-        'ubicacion_gps',
         'imagen_url',
     ];
 

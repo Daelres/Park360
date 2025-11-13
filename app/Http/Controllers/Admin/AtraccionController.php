@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Atraccion;
 use App\Models\Sede;
-use App\Models\Zona;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -47,7 +46,6 @@ class AtraccionController extends Controller
     {
         return view('admin.atracciones.create', [
             'sedes' => Sede::orderBy('nombre')->pluck('nombre', 'id'),
-            'zonas' => Zona::orderBy('nombre')->pluck('nombre', 'id'),
         ]);
     }
 
@@ -76,7 +74,6 @@ class AtraccionController extends Controller
         return view('admin.atracciones.edit', [
             'atraccion' => $atraccione,
             'sedes' => Sede::orderBy('nombre')->pluck('nombre', 'id'),
-            'zonas' => Zona::orderBy('nombre')->pluck('nombre', 'id'),
         ]);
     }
 
@@ -104,14 +101,12 @@ class AtraccionController extends Controller
     {
         return $request->validate([
             'sede_id' => ['required', 'exists:sedes,id'],
-            'zona_id' => ['required', 'exists:zona,id'],
             'nombre' => ['required', 'string', 'max:255'],
             'descripcion' => ['nullable', 'string'],
             'tipo' => ['nullable', 'string', 'max:255'],
             'altura_minima' => ['nullable', 'integer', 'min:0'],
             'capacidad' => ['required', 'integer', 'min:0'],
             'estado_operativo' => ['required', 'string', 'max:255'],
-            'ubicacion_gps' => ['nullable', 'string', 'max:255'],
             'imagen_url' => ['nullable', 'url'],
         ]);
     }
