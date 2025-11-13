@@ -51,6 +51,8 @@ class DatabaseSeeder extends Seeder
             ReembolsoSeeder::class,
             SedesSeeder::class,
             TareaOperativaSeeder::class,
+            TarifaSeeder::class,
+            TurnoSeeder::class,
 
         ]);
 
