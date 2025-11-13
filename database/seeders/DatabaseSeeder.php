@@ -23,12 +23,12 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
+            UsersSeeder::class,
             RolSeeder::class,
             PermisoSeeder::class,
             ZonaSeeder::class,
             AtraccionSeeder::class,
             TipoTicketSeeder::class,
-            UsuarioSeeder::class,
             EmpleadoSeeder::class,
             PermisoRolSeeder::class,
             UserRolSeeder::class,
@@ -41,6 +41,13 @@ class DatabaseSeeder extends Seeder
             NotificacionDestinoSeeder::class,
             PreferenciaNotificacionSeeder::class,
             SesionSSOSeeder::class,
+            AsistenciaSeeder::class,
+            CalendarioAtraccionSeeder::class,
+            EstadoAtraccionSeeder::class,
+            IncidenteSeeder::class,
+            LecturaColaSeeder::class,
+            MantenimientoSeeder::class,
+            PagoSeeder::class,
         ]);
 
         try {

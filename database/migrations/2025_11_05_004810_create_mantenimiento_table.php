@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('fin_programado');
             $table->date('inicio_real');
             $table->date('fin_real');
-            $table->foreignId('responsable')->constrained('usuarios');
+            $table->foreignId('responsable')->constrained('users');
             $table->string('estado');
             $table->timestamps();
         });

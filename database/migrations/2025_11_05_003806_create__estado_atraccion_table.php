@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dateTime('desde');
             $table->dateTime('hasta')->nullable();
             $table->string('motivo', 255)->nullable();
-            $table->foreignId('registrado_por_id')->constrained('usuarios');
+            $table->foreignId('registrado_por_id')->constrained('users');
             $table->timestamps();
         });
     }
