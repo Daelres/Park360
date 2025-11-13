@@ -198,11 +198,23 @@
     <header>
         <div class="logo">PARK <span style="color: var(--primary-dark)">360</span></div>
         <nav>
-            <a href="{{ route('public.home') }}">Atracciones</a>
-            <a href="{{ route('public.plans') }}">Entradas</a>
-            <a href="{{ route('payments.create') }}">Pagos</a>
-            <a href="{{ route('admin.sedes.index') }}">Admin Sedes</a>
-            <a href="{{ route('admin.atracciones.index') }}">Admin Atracciones</a>
+            @auth
+                <a href="{{ route('dashboard') }}">Panel</a>
+                <a href="{{ route('orders.index') }}">Ventas</a>
+                @if(auth()->user()->hasRole(['admin', 'operator']))
+                    <a href="{{ route('ticket-types.index') }}">Entradas</a>
+                    <a href="{{ route('attractions.index') }}">Atracciones</a>
+                    <a href="{{ route('employees.index') }}">Empleados</a>
+                    <a href="{{ route('reports.index') }}">Reportes</a>
+                @endif
+                <form method="POST" action="{{ route('logout') }}" style="display:inline">
+                    @csrf
+                    <button type="submit" class="btn secondary" style="margin-left: 1rem;">Salir</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}">Ingresar</a>
+                <a href="{{ route('register') }}">Crear cuenta</a>
+            @endauth
         </nav>
     </header>
     <main>
@@ -214,5 +226,6 @@
 
         @yield('content')
     </main>
+    @stack('scripts')
 </body>
 </html>
