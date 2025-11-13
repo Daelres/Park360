@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UsersSeeder extends Seeder
 {
@@ -13,22 +12,77 @@ class UsersSeeder extends Seeder
     {
         $now = now();
 
-        $users = [];
+        $password = Hash::make('password123');
+
+        $baseUsers = [
+            [
+                'email' => 'admin@park360.test',
+                'name' => 'Administrador Park360',
+                'estado' => 'activo',
+                'ultimo_login' => null,
+                'password' => $password,
+                'email_verified_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'email' => 'operador@park360.test',
+                'name' => 'Operador Park360',
+                'estado' => 'activo',
+                'ultimo_login' => null,
+                'password' => $password,
+                'email_verified_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'email' => 'ventas@park360.test',
+                'name' => 'Ventas Park360',
+                'estado' => 'activo',
+                'ultimo_login' => null,
+                'password' => $password,
+                'email_verified_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'email' => 'cliente@park360.test',
+                'name' => 'Cliente Park360',
+                'estado' => 'activo',
+                'ultimo_login' => null,
+                'password' => $password,
+                'email_verified_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ];
+
+        DB::table('users')->upsert(
+            $baseUsers,
+            ['email'],
+            ['name', 'estado', 'ultimo_login', 'password', 'email_verified_at', 'updated_at']
+        );
 
         for ($i = 1; $i <= 100; $i++) {
+            $email = "user{$i}@example.com";
 
-            $users[] = [
-                'email' => "user{$i}@example.com",
+            $attributes = [
                 'name' => "Usuario {$i}",
                 'estado' => rand(0, 1) ? 'activo' : 'inactivo',
                 'ultimo_login' => rand(0, 1) ? now()->subDays(rand(1, 30)) : null,
-                'password' => Hash::make('password123'),
+            'password' => $password,
                 'email_verified_at' => rand(0, 1) ? now()->subDays(rand(1, 30)) : null,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'updated_at' => now(),
             ];
-        }
 
-        DB::table('users')->insert($users);
+            if (! DB::table('users')->where('email', $email)->exists()) {
+                $attributes['created_at'] = $now;
+            }
+
+            DB::table('users')->updateOrInsert(
+                ['email' => $email],
+                $attributes
+            );
+        }
     }
 }

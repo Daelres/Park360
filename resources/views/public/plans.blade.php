@@ -550,7 +550,7 @@
         </div>
     </div>
 
-    <!-- Opciones Adicionales -->
+<!-- Opciones Adicionales -->
     <div class="additional-section">
         <h2>Opciones Adicionales</h2>
         
