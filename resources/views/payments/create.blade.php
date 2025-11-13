@@ -68,10 +68,10 @@
                 <button type="submit" class="btn">Procesar pago</button>
             </form>
         </div>
-        <div class="card" style="background: linear-gradient(135deg, rgba(29,78,216,0.9), rgba(59,130,246,0.8)); color:white;">
-            <h2 style="font-size:1.75rem;">Integración PayU</h2>
-            <p>El módulo está listo para conectarse con PayU. Próximamente se añadirá la redirección automática y confirmación en tiempo real.</p>
-            <ul style="margin-top:1.5rem; line-height:1.8;">
+        <div class="card" style="background: oklch(0.7 0.25 40); color:white; border-color: oklch(0.82 0.25 130); border-width: 4px;">
+            <h2 style="font-size:1.75rem; text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);">Integración PayU</h2>
+            <p style="font-weight: 500;">El módulo está listo para conectarse con PayU. Próximamente se añadirá la redirección automática y confirmación en tiempo real.</p>
+            <ul style="margin-top:1.5rem; line-height:1.8; font-weight: 500;">
                 <li>• Registro de solicitudes de pago</li>
                 <li>• Validaciones de datos del cliente</li>
                 <li>• Espacio para tokenización y firma digital</li>
