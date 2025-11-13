@@ -55,6 +55,7 @@
             --text-muted: oklch(0.5 0.05 280);
             --border: oklch(0.9 0.02 280);
             --radius: 1.25rem;
+            --logout-btn-size: 2.75rem;
         }
 
         * { 
@@ -214,6 +215,149 @@
             margin-bottom: 1.5rem;
             font-weight: 600;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            position: relative;
+        }
+
+
+        .user-card {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            overflow: visible;
+        }
+
+        .user-card__avatar {
+            flex-shrink: 0;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: white;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-card__info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+            flex: 1;
+        }
+
+        .user-card__label {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .user-card__name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .user-card__email {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            margin: 0;
+        }
+
+        .user-card__links {
+            margin-top: 0.4rem;
+            font-size: 0.75rem;
+            opacity: 0.9;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .user-card__links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: underline;
+        }
+
+        .user-card__links a:hover {
+            color: white;
+        }
+
+        .user-card__actions {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            right: calc(-1 * var(--logout-btn-size) / 2);
+            transform: translateY(-50%);
+        }
+
+        .auth-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--logout-btn-size);
+            height: var(--logout-btn-size);
+            border-radius: 999px;
+            background: white;
+            color: var(--primary);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            font-size: 1.1rem;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+            background: var(--secondary);
+            color: var(--text-dark);
+        }
+
+        .auth-btn--login {
+            background: var(--secondary);
+            color: var(--text-dark);
+        }
+
+        .auth-btn--login:hover {
+            background: var(--secondary-dark);
+        }
+
+        .sidebar-toast {
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            border-radius: var(--radius);
+            padding: 0.9rem 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+            backdrop-filter: blur(6px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .sidebar-toast.sidebar-toast--hide {
+            opacity: 0;
+            transform: translateY(12px);
+            pointer-events: none;
         }
 
         form .field {
@@ -424,6 +568,42 @@
                 margin-left: 0;
                 width: 100%;
             }
+
+            .user-card {
+                margin-top: 1.5rem;
+                padding: 0.9rem 1rem;
+            }
+
+            .user-card__avatar {
+                width: 2.6rem;
+                height: 2.6rem;
+                font-size: 1.1rem;
+            }
+
+            .user-card__actions {
+                position: static;
+                transform: none;
+                right: auto;
+                margin-left: auto;
+            }
+
+            .user-card__links {
+                justify-content: flex-start;
+            }
+
+            .auth-btn {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+
+            .sidebar-footer {
+                gap: 0.75rem;
+                width: 100%;
+            }
+
+            .sidebar-toast {
+                font-size: 0.85rem;
+            }
         }
     </style>
     @stack('styles')
@@ -502,12 +682,69 @@
             </svg>
         </div>
         <nav>
-            <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
-            <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
-            <a href="{{ route('payments.create') }}"><i class="fas fa-wallet"></i> Pagos</a>
-            <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
-            <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
+            @php
+                $user = auth()->user();
+                $isAdmin = $user && method_exists($user, 'hasRole') ? $user->hasRole('admin') : false;
+            @endphp
+
+            @if ($isAdmin)
+                <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
+                <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
+            @else
+                <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
+                <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
+                <a href="{{ route('payments.create') }}"><i class="fas fa-shopping-cart"></i> Carrito</a>
+            @endif
         </nav>
+        <div class="sidebar-footer">
+            @auth
+                <div class="user-card">
+                    <div class="user-card__avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-card__info">
+                        <p class="user-card__label">Conectado como</p>
+                        <p class="user-card__name">{{ auth()->user()->name }}</p>
+                        <p class="user-card__email">{{ auth()->user()->email }}</p>
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}" class="user-card__actions">
+                        @csrf
+                        <button type="submit" class="auth-btn auth-btn--logout" title="Cerrar sesión">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div class="user-card user-card--guest">
+                    <div class="user-card__avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-card__info">
+                        <p class="user-card__label">Bienvenido</p>
+                        <p class="user-card__name">Iniciar sesión</p>
+                        <p class="user-card__email">Accede para administrar tu experiencia</p>
+                        @if (Route::has('register'))
+                            <div class="user-card__links">
+                                <a href="{{ route('register') }}">¿Aún sin cuenta? Regístrate</a>
+                            </div>
+                        @endif
+                    </div>
+                    @if (Route::has('login'))
+                        <div class="user-card__actions">
+                            <a href="{{ route('login') }}" class="auth-btn auth-btn--login" title="Iniciar sesión">
+                                <i class="fas fa-arrow-right-to-bracket"></i>
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            @endauth
+
+            @if (session('logout_message'))
+                <div class="sidebar-toast" role="status" aria-live="polite">
+                    {{ session('logout_message') }}
+                </div>
+            @endif
+        </div>
     </header>
     <main>
         @if (session('status'))
@@ -520,5 +757,19 @@
     </main>
 
     @stack('scripts')
+    @if (session('logout_message'))
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const toast = document.querySelector('.sidebar-toast');
+                if (!toast) {
+                    return;
+                }
+
+                setTimeout(() => {
+                    toast.classList.add('sidebar-toast--hide');
+                }, 3500);
+            });
+        </script>
+    @endif
 </body>
 </html>
