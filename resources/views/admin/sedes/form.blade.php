@@ -1,13 +1,6 @@
 @php($sede = $sede ?? new \App\Models\Sede())
 @csrf
 <div class="field">
-    <label for="codigo">Código</label>
-    <input type="text" name="codigo" id="codigo" value="{{ old('codigo', $sede->codigo ?? '') }}" required>
-    @error('codigo')
-        <small style="color:#dc2626;">{{ $message }}</small>
-    @enderror
-</div>
-<div class="field">
     <label for="nombre">Nombre</label>
     <input type="text" name="nombre" id="nombre" value="{{ old('nombre', $sede->nombre ?? '') }}" required>
     @error('nombre')
