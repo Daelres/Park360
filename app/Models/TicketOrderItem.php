@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\AddonProduct;
+use App\Models\TicketOrder;
+use App\Models\TicketType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,12 +36,14 @@ class TicketOrderItem extends Model
 
     public function ticketType(): BelongsTo
     {
-        return $this->belongsTo(TicketType::class, 'item_id');
+        return $this->belongsTo(TicketType::class, 'item_id')
+            ->where('item_type', 'ticket');
     }
 
     public function addonProduct(): BelongsTo
     {
-        return $this->belongsTo(AddonProduct::class, 'item_id');
+        return $this->belongsTo(AddonProduct::class, 'item_id')
+            ->where('item_type', 'addon');
     }
 
     public function resolveItem(): TicketType|AddonProduct|null

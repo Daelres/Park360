@@ -1,28 +1,30 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
     {
-        // Force add columns using raw SQL; ignore if they already exist
-        try {
-            DB::statement('ALTER TABLE `atraccion` ADD COLUMN `nombre` VARCHAR(100) NULL');
-        } catch (\Throwable $e) {
+        if (! Schema::hasTable('atraccion')) {
+            return;
         }
-        try {
-            DB::statement('ALTER TABLE `atraccion` ADD COLUMN `capacidad` INT NULL');
-        } catch (\Throwable $e) {
-        }
-        try {
-            DB::statement('ALTER TABLE `atraccion` ADD COLUMN `estado_operativo` VARCHAR(100) NULL');
-        } catch (\Throwable $e) {
-        }
-        try {
-            DB::statement('ALTER TABLE `atraccion` ADD COLUMN `ubicacion_gps` VARCHAR(100) NULL');
-        } catch (\Throwable $e) {
-        }
+
+        Schema::table('atraccion', function (Blueprint $table) {
+            if (! Schema::hasColumn('atraccion', 'nombre')) {
+                $table->string('nombre', 100)->nullable();
+            }
+            if (! Schema::hasColumn('atraccion', 'capacidad')) {
+                $table->integer('capacidad')->nullable();
+            }
+            if (! Schema::hasColumn('atraccion', 'estado_operativo')) {
+                $table->string('estado_operativo', 100)->nullable();
+            }
+            if (! Schema::hasColumn('atraccion', 'ubicacion_gps')) {
+                $table->string('ubicacion_gps', 100)->nullable();
+            }
+        });
     }
 
     public function down(): void
