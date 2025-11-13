@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Park360</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #1d4ed8;
@@ -20,39 +21,68 @@
             font-family: 'Nunito', Arial, sans-serif;
             background: var(--gray-100);
             color: #111827;
+            display: flex;
+            min-height: 100vh;
         }
 
         a { color: inherit; text-decoration: none; }
 
         header {
             background: white;
-            border-bottom: 1px solid var(--gray-200);
-            padding: 1rem 2rem;
+            border-right: 1px solid var(--gray-200);
+            padding: 2rem 1.5rem;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 260px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .logo {
             font-weight: 700;
             font-size: 1.25rem;
             color: var(--primary);
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
         }
 
         nav a {
-            margin-left: 1rem;
+            margin-left: 0;
+            margin-bottom: 0.75rem;
             font-weight: 600;
             color: var(--gray-600);
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        nav a i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
         }
 
         nav a:hover {
             color: var(--primary);
+            background: rgba(29, 78, 216, 0.1);
         }
 
         main {
             padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin-left: 260px;
+            flex: 1;
+            width: calc(100% - 260px);
         }
 
         .card {
@@ -191,6 +221,33 @@
             width: auto;
             min-width: 200px;
         }
+
+        @media (max-width: 768px) {
+            header {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--gray-200);
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            nav {
+                flex-direction: row;
+            }
+
+            nav a {
+                margin-bottom: 0;
+                margin-left: 1rem;
+            }
+
+            main {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
     </style>
     @stack('styles')
 </head>
@@ -198,11 +255,11 @@
     <header>
         <div class="logo">PARK <span style="color: var(--primary-dark)">360</span></div>
         <nav>
-            <a href="{{ route('public.home') }}">Atracciones</a>
-            <a href="{{ route('public.plans') }}">Entradas</a>
-            <a href="{{ route('payments.create') }}">Pagos</a>
-            <a href="{{ route('admin.sedes.index') }}">Admin Sedes</a>
-            <a href="{{ route('admin.atracciones.index') }}">Admin Atracciones</a>
+            <a href="{{ route('public.home') }}"><i class="fas fa-star"></i> Atracciones</a>
+            <a href="{{ route('public.plans') }}"><i class="fas fa-ticket"></i> Entradas</a>
+            <a href="{{ route('payments.create') }}"><i class="fas fa-credit-card"></i> Pagos</a>
+            <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-building"></i> Admin Sedes</a>
+            <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-sliders-h"></i> Admin Atracciones</a>
         </nav>
     </header>
     <main>
