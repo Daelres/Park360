@@ -60,14 +60,14 @@ class ReembolsoSeeder extends Seeder
                 : null;
 
             $registros[] = [
-                'pago_id'      => $pago->id,
-                'monto'        => $montoReembolso,
-                'motivo'       => $motivos[array_rand($motivos)],
-                'estado'       => $estado,
+                'pago_id' => $pago->id,
+                'monto' => $montoReembolso,
+                'motivo' => $motivos[array_rand($motivos)],
+                'estado' => $estado,
                 'requested_at' => $requestedAt,
                 'confirmed_at' => $confirmedAt,
-                'created_at'   => $now,
-                'updated_at'   => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 

@@ -45,13 +45,13 @@ class SesionSSOSeeder extends Seeder
             $expAt = now()->addHours(rand(1, 48));
 
             $sesiones[] = [
-                'usuario_id'    => $usuario,
-                'proveedor'     => $proveedor,
-                'oidc_sub'      => Str::uuid(),
-                'exp_at'        => $expAt,
+                'usuario_id' => $usuario,
+                'proveedor' => $proveedor,
+                'oidc_sub' => Str::uuid(),
+                'exp_at' => $expAt,
                 'refresh_token' => rand(0, 1) ? Str::random(40) : null,
-                'created_at'    => $now,
-                'updated_at'    => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
 
             // Detener cuando tengamos 120 registros válidos

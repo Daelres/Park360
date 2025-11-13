@@ -45,12 +45,12 @@ class PreferenciaNotificacionSeeder extends Seeder
             $combinaciones[$key] = true;
 
             $registros[] = [
-                'usuario_id'       => $usuario,
-                'cliente_id'       => $cliente,
-                'canal_email'      => rand(0, 1),
+                'usuario_id' => $usuario,
+                'cliente_id' => $cliente,
+                'canal_email' => rand(0, 1),
                 'horario_silencio' => $intervalosSilencio[array_rand($intervalosSilencio)],
-                'created_at'       => $now,
-                'updated_at'       => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
 
             // Si ya tenemos 100 registros, detener

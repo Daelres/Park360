@@ -32,10 +32,10 @@ class ClienteSeeder extends Seeder
             $nombre = $nombresBase[array_rand($nombresBase)] . ' ' . $apellidosBase[array_rand($apellidosBase)];
 
             $clientes[] = [
-                'email'      => "cliente$i@example.com",
-                'nombre'     => $nombre,
-                'telefono'   => '+57 3' . rand(100000000, 999999999),
-                'pais'       => $paises[array_rand($paises)],
+                'email' => "cliente$i@example.com",
+                'nombre' => $nombre,
+                'telefono' => '+57 3' . rand(100000000, 999999999),
+                'pais' => $paises[array_rand($paises)],
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
