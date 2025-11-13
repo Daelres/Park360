@@ -32,8 +32,23 @@
             <div>
                 <h1 style="margin:0;font-size:2rem;color:#2D1B69;">Planifica tu visita a Park360</h1>
                 <p style="margin:0;color:#6B5B8F;max-width:640px;">Selecciona la fecha, el tipo de entradas y los productos adicionales para construir tu paquete ideal antes de pasar al pago seguro con Stripe.</p>
+                @if($selectedSede)
+                    <p style="margin:0.4rem 0 0;color:#93B5F5;font-weight:600;">Estás revisando opciones para {{ $selectedSede->nombre }}.</p>
+                @endif
             </div>
-            <a href="{{ route('public.plans') }}" class="btn btn-secondary">Ver planes públicos</a>
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:flex-end;justify-content:flex-end;">
+                @if($sedes->isNotEmpty())
+                    <div style="display:flex;flex-direction:column;gap:0.35rem;min-width:220px;">
+                        <label for="sede-select" style="font-weight:600;color:#2D1B69;">Selecciona la sede</label>
+                        <select id="sede-select" name="sede_id" style="padding:0.65rem 0.9rem;border-radius:0.75rem;border:1px solid #d1d5db;">
+                            @foreach($sedes as $sede)
+                                <option value="{{ $sede->id }}" {{ $selectedSedeId === $sede->id ? 'selected' : '' }}>{{ $sede->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+                <a href="{{ route('public.plans') }}" class="btn btn-secondary">Ver planes públicos</a>
+            </div>
         </div>
 
         <div class="grid" style="grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr); gap:2rem; align-items:flex-start;">
@@ -59,25 +74,29 @@
                 <section class="card">
                     <h2 style="margin-top:0;color:#2D1B69;margin-bottom:1rem;">2. Elige tus entradas</h2>
                     <div class="flex flex-col gap-3">
-                        @foreach($ticketTypes as $ticket)
-                            <article class="ticket-card" data-ticket-id="{{ $ticket->id }}" style="border:1px solid rgba(147,181,245,0.35);border-radius:1rem;padding:1.2rem;display:flex;flex-direction:column;gap:0.6rem;">
-                                <div style="display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;">
-                                    <div>
-                                        <h3 style="margin:0;color:#2D1B69;">{{ $ticket->name }}</h3>
-                                        <p style="margin:0;color:#6B5B8F;font-size:0.9rem;">{{ $ticket->description }}</p>
+                        @if($ticketTypes->isEmpty())
+                            <p style="margin:0;color:#9CA3AF;font-size:0.9rem;">No hay entradas disponibles para la sede seleccionada en este momento.</p>
+                        @else
+                            @foreach($ticketTypes as $ticket)
+                                <article class="ticket-card" data-ticket-id="{{ $ticket->id }}" style="border:1px solid rgba(147,181,245,0.35);border-radius:1rem;padding:1.2rem;display:flex;flex-direction:column;gap:0.6rem;">
+                                    <div style="display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;">
+                                        <div>
+                                            <h3 style="margin:0;color:#2D1B69;">{{ $ticket->name }}</h3>
+                                            <p style="margin:0;color:#6B5B8F;font-size:0.9rem;">{{ $ticket->description }}</p>
+                                        </div>
+                                        <span style="color:#93B5F5;font-weight:700;font-size:1.2rem;">${{ number_format($ticket->base_price, 0, ',', '.') }}</span>
                                     </div>
-                                    <span style="color:#93B5F5;font-weight:700;font-size:1.2rem;">${{ number_format($ticket->base_price, 0, ',', '.') }}</span>
-                                </div>
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem;">
-                                    <span style="color:#6B5B8F;font-size:0.9rem;">Cantidad</span>
-                                    <div class="quantity-control" style="display:flex;align-items:center;gap:0.75rem;">
-                                        <button type="button" class="btn-qty" data-action="decrement" aria-label="Reducir">−</button>
-                                        <span class="qty" data-role="quantity">0</span>
-                                        <button type="button" class="btn-qty" data-action="increment" aria-label="Incrementar">+</button>
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem;">
+                                        <span style="color:#6B5B8F;font-size:0.9rem;">Cantidad</span>
+                                        <div class="quantity-control" style="display:flex;align-items:center;gap:0.75rem;">
+                                            <button type="button" class="btn-qty" data-action="decrement" aria-label="Reducir">−</button>
+                                            <span class="qty" data-role="quantity">0</span>
+                                            <button type="button" class="btn-qty" data-action="increment" aria-label="Incrementar">+</button>
+                                        </div>
                                     </div>
-                                </div>
-                            </article>
-                        @endforeach
+                                </article>
+                            @endforeach
+                        @endif
                     </div>
                 </section>
 
@@ -146,12 +165,14 @@
             visitDates: @json($visitDates),
             tickets: @json($ticketCatalog),
             addons: @json($addonCatalog),
+            sedeId: @json($selectedSedeId),
         };
 
         const state = {
             visitDateId: @json($selectedDateId),
             visitDateValue: @json($selectedDateValue),
             visitDateLabel: @json($selectedDateLabel),
+            sedeId: @json($selectedSedeId),
             tickets: {},
             addons: {},
         };
@@ -472,6 +493,18 @@
                 return;
             }
 
+            if (!state.sedeId) {
+                showToast('Selecciona una sede antes de continuar.', 'warning');
+                return;
+            }
+
+            const sedeId = Number.parseInt(state.sedeId, 10);
+
+            if (Number.isNaN(sedeId)) {
+                showToast('Selecciona una sede válida antes de continuar.', 'warning');
+                return;
+            }
+
             const ready = await ensureVisitDate(targetValue, { silent: false, createIfMissing: true });
 
             if (!ready) {
@@ -493,6 +526,7 @@
 
             const payload = {
                 visit_date_id: state.visitDateId,
+                sede_id: sedeId,
                 tickets: ticketsPayload,
                 addons: addonsPayload,
             };
@@ -523,6 +557,26 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            const sedeSelect = document.getElementById('sede-select');
+
+            if (sedeSelect) {
+                state.sedeId = sedeSelect.value || null;
+
+                sedeSelect.addEventListener('change', () => {
+                    state.sedeId = sedeSelect.value || null;
+                    const url = new URL(window.location.href);
+
+                    if (sedeSelect.value) {
+                        url.searchParams.set('sede_id', sedeSelect.value);
+                    } else {
+                        url.searchParams.delete('sede_id');
+                    }
+
+                    url.searchParams.delete('page');
+                    window.location.href = url.toString();
+                });
+            }
+
             attachQuantityHandlers('.ticket-card', state.tickets);
             attachQuantityHandlers('.addon-card', state.addons);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AddonProduct;
+use App\Models\Sede;
 use App\Models\TicketOrder;
 use App\Models\TicketOrderItem;
 use App\Models\TicketType;
@@ -28,6 +29,7 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'visit_date_id' => ['required', 'exists:visit_dates,id'],
+            'sede_id' => ['required', 'exists:sedes,id'],
             'tickets' => ['required', 'array'],
             'tickets.*.id' => ['required', 'exists:ticket_types,id'],
             'tickets.*.quantity' => ['required', 'integer', 'min:1'],
@@ -51,11 +53,31 @@ class CheckoutController extends Controller
         $currency = $this->stripeCurrency();
 
         $visitDate = VisitDate::findOrFail($validated['visit_date_id']);
+        $sede = Sede::findOrFail($validated['sede_id']);
         $user = $request->user();
         $customerId = $user->createOrGetStripeCustomer();
 
-    $ticketTypes = TicketType::whereIn('id', $ticketsPayload->pluck('id'))->get()->keyBy('id');
-    $addonProducts = AddonProduct::whereIn('id', $addonsPayload->pluck('id'))->get()->keyBy('id');
+        $ticketTypes = TicketType::where('sede_id', $sede->id)
+            ->whereIn('id', $ticketsPayload->pluck('id'))
+            ->get()
+            ->keyBy('id');
+        $addonProducts = AddonProduct::whereIn('id', $addonsPayload->pluck('id'))
+            ->get()
+            ->keyBy('id');
+
+        if ($ticketTypes->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontraron entradas válidas para la sede seleccionada.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $missingTicket = $ticketsPayload->first(fn ($item) => ! $ticketTypes->has($item['id']));
+
+        if ($missingTicket) {
+            return response()->json([
+                'message' => 'Una de las entradas seleccionadas no pertenece a la sede actual.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         $lineItems = [];
         $orderTotal = 0;
@@ -67,6 +89,7 @@ class CheckoutController extends Controller
         try {
             $order = TicketOrder::create([
                 'user_id' => $user->id,
+                'sede_id' => $sede->id,
                 'visit_date_id' => $visitDate->id,
                 'status' => TicketOrder::STATUS_PENDING,
             ]);
@@ -163,6 +186,7 @@ class CheckoutController extends Controller
                 'metadata' => [
                     'order_uuid' => $order->uuid,
                     'visit_date' => $visitDate->visit_date->toDateString(),
+                    'sede_id' => (string) $sede->id,
                 ],
                 'line_items' => $lineItems,
             ]);
@@ -196,7 +220,7 @@ class CheckoutController extends Controller
 
         /** @var TicketOrder $order */
         $order = TicketOrder::query()
-            ->with(['items', 'visitDate'])
+            ->with(['items', 'visitDate', 'sede'])
             ->where('uuid', $orderUuid)
             ->where('user_id', $request->user()->id)
             ->firstOrFail();
@@ -262,10 +286,10 @@ class CheckoutController extends Controller
             'stripe_payment_intent_id' => $paymentIntentId,
         ]);
 
-        $this->qrCodeService->ensureForOrder($order->refresh()->load('items', 'visitDate'));
+    $this->qrCodeService->ensureForOrder($order->refresh()->load('items', 'visitDate', 'sede'));
 
         return view('payments.success', [
-            'order' => $order->load('items', 'visitDate'),
+            'order' => $order->load('items', 'visitDate', 'sede'),
             'session' => $session,
         ]);
     }

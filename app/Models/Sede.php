@@ -25,4 +25,9 @@ class Sede extends Model
     {
         return $this->hasMany(Atraccion::class, 'sede_id');
     }
+
+    public function ticketTypes(): HasMany
+    {
+        return $this->hasMany(TicketType::class);
+    }
 }
