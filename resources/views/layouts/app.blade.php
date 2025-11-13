@@ -374,7 +374,7 @@
                 @auth
                 <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-building"></i> Admin Sedes</a>
                 <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-sliders-h"></i> Admin Atracciones</a>
-                <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-sliders-h"></i> Mi cuenta</a>
+                <a href="{{ route('admin.profile') }}"><i class="fas fa-sliders-h"></i> Mi cuenta</a>
                 @endauth
             </nav>
 
