@@ -86,7 +86,8 @@
             margin: 0;
             font-family: 'Fredoka', 'Nunito', Arial, sans-serif;
             background: oklch(0.99 0.015 85);
-            color: var(--text-dark);
+            /* Usamos el valor directo para evitar errores del analizador sin cambiar la UI */
+            color: oklch(0.2 0.05 280);
             display: flex;
             min-height: 100vh;
         }
@@ -160,7 +161,7 @@
         }
 
         nav a:hover {
-            color: var(--text-dark);
+            color: oklch(0.2 0.05 280);
             background: var(--secondary);
             transform: translateX(8px) scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -208,7 +209,7 @@
 
         .btn.secondary {
             background: var(--secondary);
-            color: var(--text-dark);
+            color: oklch(0.2 0.05 280);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
@@ -233,7 +234,7 @@
 
         .flash-message {
             background: var(--secondary);
-            color: var(--text-dark);
+            color: oklch(0.2 0.05 280);
             border: 3px solid var(--accent);
             padding: 1rem 1.5rem;
             border-radius: var(--radius);
@@ -331,7 +332,7 @@
             margin: 0;
             position: absolute;
             top: 50%;
-            right: calc(-1 * var(--logout-btn-size) / 2);
+            right: calc(-1 * 2.75rem / 2);
             transform: translateY(-50%);
         }
 
@@ -339,8 +340,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: var(--logout-btn-size);
-            height: var(--logout-btn-size);
+            width: 2.75rem;
+            height: 2.75rem;
             border-radius: 999px;
             background: white;
             color: var(--primary);
@@ -355,12 +356,12 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
             background: var(--secondary);
-            color: var(--text-dark);
+            color: oklch(0.2 0.05 280);
         }
 
         .auth-btn--login {
             background: var(--secondary);
-            color: var(--text-dark);
+            color: oklch(0.2 0.05 280);
         }
 
         .auth-btn--login:hover {
@@ -393,7 +394,7 @@
             display: block;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            color: var(--text-dark);
+            color: oklch(0.2 0.05 280);
         }
 
         form input,
@@ -466,12 +467,12 @@
 
         .badge.success {
             background: var(--success);
-            color: var(--text-dark);
+            color: oklch(0.2 0.05 280);
         }
 
         .badge.warning {
             background: var(--warning);
-            color: var(--text-dark);
+            color: oklch(0.2 0.05 280);
         }
 
         .grid {
@@ -660,13 +661,13 @@
             <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
             <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
             <a href="{{ route('admin.reportes.index') }}"><i class="fas fa-chart-bar"></i> Reportes</a>
+            <a href="{{ route('admin.analitica.index') }}"><i class="fas fa-chart-line"></i> Analítica aplicación</a>
+            <a href="{{ route('admin.users.index') }}"><i class="fas fa-users-gear"></i> Roles y permisos</a>
 
         @else
             <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
             <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
             <a href="{{ route('payments.create') }}"><i class="fas fa-shopping-cart"></i> Carrito</a>
-            <a href="{{ route('admin.reportes.index') }}"><i class="fas fa-chart-bar"></i> Reportes</a>
-
         @endif
     </nav>
     <div class="sidebar-footer">
