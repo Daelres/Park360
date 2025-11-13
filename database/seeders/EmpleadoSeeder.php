@@ -11,27 +11,36 @@ class EmpleadoSeeder extends Seeder
     {
         $now = now();
         // Mapear usuarios existentes por email para asociarlos
-        $usuarios = DB::table('usuarios')->pluck('id', 'email');
+        $usuarios = DB::table('users')->pluck('id', 'email');
 
-        DB::table('empleado')->insert([
-            [
-                'usuario_id' => $usuarios['operador@park360.test'] ?? 1,
+        $data = [];
+
+        if (isset($usuarios['operador@park360.test'])) {
+            $data[] = [
+                'user_id' => $usuarios['operador@park360.test'],
                 'documento' => 'EMP-1001',
                 'cargo' => 'Operador',
                 'area' => 'Atracciones',
                 'fecha_ingreso' => now()->subYears(1)->toDateString(),
                 'created_at' => $now,
                 'updated_at' => $now,
-            ],
-            [
-                'usuario_id' => $usuarios['ventas@park360.test'] ?? 1,
+            ];
+        }
+
+        if (isset($usuarios['ventas@park360.test'])) {
+            $data[] = [
+                'user_id' => $usuarios['ventas@park360.test'],
                 'documento' => 'EMP-1002',
                 'cargo' => 'Cajero',
                 'area' => 'Ventas',
                 'fecha_ingreso' => now()->subMonths(6)->toDateString(),
                 'created_at' => $now,
                 'updated_at' => $now,
-            ],
-        ]);
+            ];
+        }
+
+        if (!empty($data)) {
+            DB::table('empleado')->upsert($data, ['documento'], ['user_id', 'cargo', 'area', 'fecha_ingreso', 'updated_at']);
+        }
     }
 }

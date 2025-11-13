@@ -13,7 +13,7 @@ class PreferenciaNotificacion extends Model
     protected $table = 'preferencia_notificacion';
 
     protected $fillable = [
-        'usuario_id',
+    'user_id',
         'cliente_id',
         'canal_email',
         'horario_silencio',
@@ -25,7 +25,7 @@ class PreferenciaNotificacion extends Model
 
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
+    return $this->belongsTo(User::class, 'user_id');
     }
 
     public function cliente(): BelongsTo

@@ -14,7 +14,7 @@ class TareaOperativa extends Model
 
     protected $fillable = [
         'atractivo_id',
-        'asignada_a',
+    'asignada_a_user_id',
         'titulo',
         'prioridad',
         'estado',
@@ -34,6 +34,6 @@ class TareaOperativa extends Model
 
     public function asignadoA(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'asignada_a');
+    return $this->belongsTo(User::class, 'asignada_a_user_id');
     }
 }

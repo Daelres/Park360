@@ -13,7 +13,7 @@ class SesionSSO extends Model
     protected $table = 'sesion_s_s_o';
 
     protected $fillable = [
-        'usuario_id',
+    'user_id',
         'proveedor',
         'oidc_sub',
         'exp_at',
@@ -26,6 +26,6 @@ class SesionSSO extends Model
 
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
+    return $this->belongsTo(User::class, 'user_id');
     }
 }

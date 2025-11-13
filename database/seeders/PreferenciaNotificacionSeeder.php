@@ -10,13 +10,13 @@ class PreferenciaNotificacionSeeder extends Seeder
     public function run(): void
     {
         $now = now();
-        $usuarios = DB::table('usuarios')->pluck('id', 'email');
+        $usuarios = DB::table('users')->pluck('id', 'email');
         $clientes = DB::table('cliente')->pluck('id', 'email');
 
         $rows = [];
         if (isset($usuarios['admin@park360.test'])) {
             $rows[] = [
-                'usuario_id' => $usuarios['admin@park360.test'],
+                'user_id' => $usuarios['admin@park360.test'],
                 'cliente_id' => null,
                 'canal_email' => true,
                 'horario_silencio' => null,
@@ -26,7 +26,7 @@ class PreferenciaNotificacionSeeder extends Seeder
         }
         if (isset($usuarios['ventas@park360.test'], $clientes['cliente1@example.com'])) {
             $rows[] = [
-                'usuario_id' => $usuarios['ventas@park360.test'],
+                'user_id' => $usuarios['ventas@park360.test'],
                 'cliente_id' => $clientes['cliente1@example.com'],
                 'canal_email' => true,
                 'horario_silencio' => '22:00-07:00',
@@ -36,7 +36,11 @@ class PreferenciaNotificacionSeeder extends Seeder
         }
 
         if (!empty($rows)) {
-            DB::table('preferencia_notificacion')->insert($rows);
+            DB::table('preferencia_notificacion')->upsert(
+                $rows,
+                ['user_id', 'cliente_id'],
+                ['canal_email', 'horario_silencio', 'updated_at']
+            );
         }
     }
 }

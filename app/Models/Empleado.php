@@ -14,7 +14,7 @@ class Empleado extends Model
     protected $table = 'empleado';
 
     protected $fillable = [
-        'usuario_id',
+        'user_id',
         'documento',
         'cargo',
         'area',
@@ -27,7 +27,7 @@ class Empleado extends Model
 
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
+    return $this->belongsTo(User::class, 'user_id');
     }
 
     public function turnos(): HasMany

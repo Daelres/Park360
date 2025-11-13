@@ -20,7 +20,7 @@ class Rol extends Model
 
     public function usuarios(): BelongsToMany
     {
-        return $this->belongsToMany(Usuario::class, 'user_rol', 'rol_id', 'usuario_id')->withTimestamps();
+    return $this->belongsToMany(User::class, 'user_rol', 'rol_id', 'user_id')->withTimestamps();
     }
 
     public function permisos(): BelongsToMany

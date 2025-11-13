@@ -11,10 +11,10 @@ class RolSeeder extends Seeder
     public function run(): void
     {
         $now = now();
-        DB::table('rol')->insert([
+        DB::table('rol')->upsert([
             ['nombre' => 'admin', 'descripcion' => 'Administrador del sistema', 'created_at' => $now, 'updated_at' => $now],
             ['nombre' => 'operador', 'descripcion' => 'Operador de atracciones', 'created_at' => $now, 'updated_at' => $now],
             ['nombre' => 'ventas', 'descripcion' => 'Operador de ventas', 'created_at' => $now, 'updated_at' => $now],
-        ]);
+        ], ['nombre'], ['descripcion', 'updated_at']);
     }
 }

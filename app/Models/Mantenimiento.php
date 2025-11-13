@@ -19,7 +19,7 @@ class Mantenimiento extends Model
         'fin_programado',
         'inicio_real',
         'fin_real',
-        'responsable',
+    'responsable_user_id',
         'estado',
     ];
 
@@ -37,6 +37,6 @@ class Mantenimiento extends Model
 
     public function responsableUsuario(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'responsable');
+    return $this->belongsTo(User::class, 'responsable_user_id');
     }
 }

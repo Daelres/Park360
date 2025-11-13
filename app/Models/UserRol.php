@@ -13,13 +13,13 @@ class UserRol extends Model
     protected $table = 'user_rol';
 
     protected $fillable = [
-        'usuario_id',
+    'user_id',
         'rol_id',
     ];
 
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
+    return $this->belongsTo(User::class, 'user_id');
     }
 
     public function rol(): BelongsTo
