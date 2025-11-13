@@ -10,36 +10,46 @@ class AtraccionSeeder extends Seeder
     public function run(): void
     {
         $now = now();
-        $zonas = DB::table('zona')->pluck('id', 'nombre');
+        $zonas = DB::table('zona')->pluck('id')->toArray();
 
-        DB::table('atraccion')->insert([
-            [
-                'zona_id' => $zonas['Zona A'] ?? 1,
-                'nombre' => 'Montaña Rusa Andina',
-                'capacidad' => 24,
-                'estado_operativo' => 'operativa',
-                'ubicacion_gps' => '6.2518,-75.5636',
+        $nombres = [
+            'Montaña Rusa Andina',
+            'Río Lento Tropical',
+            'Rueda Panorámica',
+            'Casa del Terror Amazónico',
+            'Splash Caribeño',
+            'Tren de los Volcanes',
+            'Torre del Vértigo',
+            'Safari Jurásico',
+            'Ciclón del Pacífico',
+            'Vuelo del Cóndor'
+        ];
+
+        $estados = ['operativa', 'mantenimiento', 'cerrada'];
+
+        $atracciones = [];
+
+        for ($i = 0; $i < 10; $i++) {
+            $atracciones[] = [
+                'zona_id' => $zonas[array_rand($zonas)],
+                'nombre' => $nombres[$i],
+                'capacidad' => rand(15, 80),
+                'estado_operativo' => $estados[array_rand($estados)],
+                'ubicacion_gps' => $this->generarCoordenada(),
                 'created_at' => $now,
                 'updated_at' => $now,
-            ],
-            [
-                'zona_id' => $zonas['Zona B'] ?? 1,
-                'nombre' => 'Río Lento Tropical',
-                'capacidad' => 60,
-                'estado_operativo' => 'mantenimiento',
-                'ubicacion_gps' => '6.2520,-75.5650',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-            [
-                'zona_id' => $zonas['Zona C'] ?? 1,
-                'nombre' => 'Rueda Panorámica',
-                'capacidad' => 40,
-                'estado_operativo' => 'operativa',
-                'ubicacion_gps' => '6.2535,-75.5640',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-        ]);
+            ];
+        }
+
+        DB::table('atraccion')->insert($atracciones);
+    }
+
+    private function generarCoordenada(): string
+    {
+        // Coordenadas aproximadas simuladas (rango aleatorio)
+        $lat = 6.25 + (rand(-100, 100) / 10000);
+        $lng = -75.56 + (rand(-100, 100) / 10000);
+
+        return $lat . ',' . $lng;
     }
 }
