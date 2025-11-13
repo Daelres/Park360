@@ -16,7 +16,7 @@ class UserRolSeeder extends Seeder
         $rows = [];
         if (isset($usuarios['admin@park360.test'], $roles['admin'])) {
             $rows[] = [
-                'user_id' => $usuarios['admin@park360.test'],
+                'usuario_id' => $usuarios['admin@park360.test'],
                 'rol_id' => $roles['admin'],
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -24,7 +24,7 @@ class UserRolSeeder extends Seeder
         }
         if (isset($usuarios['operador@park360.test'], $roles['employee'])) {
             $rows[] = [
-                'user_id' => $usuarios['operador@park360.test'],
+                'usuario_id' => $usuarios['operador@park360.test'],
                 'rol_id' => $roles['employee'],
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -32,7 +32,7 @@ class UserRolSeeder extends Seeder
         }
         if (isset($usuarios['ventas@park360.test'], $roles['employee'])) {
             $rows[] = [
-                'user_id' => $usuarios['ventas@park360.test'],
+                'usuario_id' => $usuarios['ventas@park360.test'],
                 'rol_id' => $roles['employee'],
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -40,7 +40,7 @@ class UserRolSeeder extends Seeder
         }
         if (isset($usuarios['cliente@park360.test'], $roles['client'])) {
             $rows[] = [
-                'user_id' => $usuarios['cliente@park360.test'],
+                'usuario_id' => $usuarios['cliente@park360.test'],
                 'rol_id' => $roles['client'],
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -48,7 +48,7 @@ class UserRolSeeder extends Seeder
         }
 
         if (!empty($rows)) {
-            DB::table('user_rol')->upsert($rows, ['user_id', 'rol_id'], ['updated_at']);
+            DB::table('user_rol')->upsert($rows, ['usuario_id', 'rol_id'], ['updated_at']);
         }
     }
 }
