@@ -23,7 +23,8 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->text('description')->nullable();
             $table->unsignedInteger('base_price');
-            $table->string('stripe_product_id', 64)->unique();
+            $table->string('stripe_product_id', 64);
+            $table->index('stripe_product_id', 'ticket_types_stripe_product_id_index');
             $table->string('stripe_price_id', 64)->nullable();
             $table->timestamps();
         });

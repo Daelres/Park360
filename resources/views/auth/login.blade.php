@@ -238,6 +238,16 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    <!-- Authentication Error -->
+    @if ($errors->has('email'))
+        <div style="background: #FFE8E0; border-left: 4px solid #FF6B35; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            <p style="margin: 0; color: #C2190F; font-weight: 600; font-size: 0.95rem;">
+                <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>
+                {{ $errors->first('email') }}
+            </p>
+        </div>
+    @endif
+
     <div class="login-header">
         <div style="margin-bottom: 1rem;">
             <img src="{{ asset('images/ChatGPT Image 12 nov 2025, 23_37_27.png') }}" alt="Park360 Logo" style="max-width: 120px; height: auto; margin: 0 auto; display: block;">
@@ -255,9 +265,6 @@
                 {{ __('Correo Electrónico') }}
             </label>
             <x-text-input id="email" class="form-input" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            @error('email')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
         </div>
 
         <!-- Password -->

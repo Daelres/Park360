@@ -56,13 +56,10 @@ class TicketCatalogSeeder extends Seeder
 
         foreach ($sedes as $index => $sede) {
             foreach ($tickets as $ticket) {
-                $baseProductId = $ticket['stripe_product_id']
+                // Use the same Stripe product ID for all sedes
+                // Each sede will have different prices, but same product
+                $productId = $ticket['stripe_product_id']
                     ?: sprintf('prod_%s_base', $ticket['code']);
-
-                $suffix = '_' . $sede->id;
-                $productId = $index === 0
-                    ? $baseProductId
-                    : Str::limit($baseProductId, 64 - strlen($suffix), '') . $suffix;
 
                 TicketType::updateOrCreate(
                     ['sede_id' => $sede->id, 'code' => $ticket['code']],

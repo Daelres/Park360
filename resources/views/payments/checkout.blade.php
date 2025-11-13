@@ -11,10 +11,24 @@
         </div>
 
         <div class="grid" style="grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr); gap:2rem; align-items:flex-start;">
-            <section class="card" style="min-height:420px;display:flex;flex-direction:column;gap:1rem;">
-                <h2 style="margin:0;color:#2D1B69;">Pago seguro con Stripe</h2>
+            <section class="card" style="min-height:520px;display:flex;flex-direction:column;gap:1.5rem;padding:2rem;">
+                <div style="display:flex;align-items:center;gap:0.75rem;background:rgba(76,175,80,0.08);padding:0.85rem 1rem;border-radius:0.75rem;border:1px solid rgba(76,175,80,0.2);">
+                    <span style="display:inline-flex;width:40px;height:40px;border-radius:50%;background:#4CAF50;color:white;align-items:center;justify-content:center;font-weight:700;">SSL</span>
+                    <div>
+                        <strong style="display:block;color:#1B5E20;font-size:0.95rem;">Conexión cifrada y verificada</strong>
+                        <small style="color:#388E3C;">Procesamos pagos mediante Stripe sin guardar los datos de tu tarjeta.</small>
+                    </div>
+                </div>
+
                 <div id="checkout-status" style="color:#6B5B8F;font-size:0.95rem;">Preparando el formulario…</div>
-                <div id="embedded-checkout" style="flex:1;min-height:360px;border:1px solid rgba(147,181,245,0.3);border-radius:1rem;overflow:hidden;background:white;margin:2rem auto;width:100%;max-width:540px;padding:0.75rem 0.5rem;"></div>
+
+                <div id="embedded-checkout" style="flex:1;min-height:480px;border:1px solid rgba(45,27,105,0.08);border-radius:1.25rem;overflow:hidden;background:white;padding:1.75rem;box-shadow:0 25px 60px rgba(45,27,105,0.08);"></div>
+
+                <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:center;margin-top:0.5rem;color:#9CA3AF;font-size:0.8rem;">
+                    <span>Pagos protegidos con Stripe</span>
+                    <span>Certificación PCI DSS Nivel 1</span>
+                    <span>Monitoreo anti-fraude permanente</span>
+                </div>
             </section>
 
             <aside class="card" style="position:sticky;top:1rem;display:flex;flex-direction:column;gap:1rem;">

@@ -11,10 +11,16 @@ class AtraccionSeeder extends Seeder
     {
         $now = now();
         $sedes = DB::table('sedes')->pluck('id')->toArray();
+        
+        if (empty($sedes)) {
+            $sedes = [1]; // Fallback to ID 1 if no sedes exist
+        }
+        
+        $sedeCount = count($sedes);
 
         $atracciones = [
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[0 % $sedeCount],
                 'nombre' => 'Montaña Rusa Andina',
                 'descripcion' => 'Una emocionante montaña rusa con vueltas y giros extremos. Ideal para amantes de la adrenalina.',
                 'tipo' => 'Extrema',
@@ -26,7 +32,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[1 % $sedeCount],
                 'nombre' => 'Río Lento Tropical',
                 'descripcion' => 'Un tranquilo paseo en bote a través de un entorno tropical. Perfecto para familias.',
                 'tipo' => 'Familiar',
@@ -38,7 +44,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[2 % $sedeCount],
                 'nombre' => 'Rueda Panorámica',
                 'descripcion' => 'Una hermosa rueda panorámica con vistas espectaculares del parque. Accesible para todas las edades.',
                 'tipo' => 'Familiar',
@@ -50,7 +56,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[3 % $sedeCount],
                 'nombre' => 'Casa del Terror Amazónico',
                 'descripcion' => 'Una experiencia de horror interactiva con efectos especiales y actores. Adecuada para mayores de 13 años.',
                 'tipo' => 'Interactiva/Tecnologica',
@@ -62,7 +68,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[4 % $sedeCount],
                 'nombre' => 'Splash Caribeño',
                 'descripcion' => 'Un emocionante paseo acuático con salpicadas y caídas. Lleva traje de baño.',
                 'tipo' => 'Familiar',
@@ -74,7 +80,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[5 % $sedeCount],
                 'nombre' => 'Tren de los Volcanes',
                 'descripcion' => 'Un viaje en tren a través de un paisaje volcánico fantástico con efectos especiales.',
                 'tipo' => 'Infantil',
@@ -86,7 +92,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[6 % $sedeCount],
                 'nombre' => 'Torre del Vértigo',
                 'descripcion' => 'Una emocionante caída libre desde una altura de 50 metros. Altamente emocionante.',
                 'tipo' => 'Extrema',
@@ -98,7 +104,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[7 % $sedeCount],
                 'nombre' => 'Safari Jurásico',
                 'descripcion' => 'Un viaje interactivo donde verás dinosaurios de realidad aumentada. Experiencia educativa y divertida.',
                 'tipo' => 'Interactiva/Tecnologica',
@@ -110,7 +116,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[8 % $sedeCount],
                 'nombre' => 'Ciclón del Pacífico',
                 'descripcion' => 'Un emocionante carrusel giratorio que aumenta la velocidad progresivamente. Para los valientes.',
                 'tipo' => 'Extrema',
@@ -122,7 +128,7 @@ class AtraccionSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'sede_id' => $sedes[0] ?? 1,
+                'sede_id' => $sedes[9 % $sedeCount],
                 'nombre' => 'Vuelo del Cóndor',
                 'descripcion' => 'Un simulador de vuelo que te lleva a través de paisajes montañosos. Experiencia inmersiva.',
                 'tipo' => 'Interactiva/Tecnologica',

@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Laravel\Cashier\Cashier;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,7 +56,32 @@ class CheckoutController extends Controller
         $visitDate = VisitDate::findOrFail($validated['visit_date_id']);
         $sede = Sede::findOrFail($validated['sede_id']);
         $user = $request->user();
-        $customerId = $user->createOrGetStripeCustomer();
+        
+        // Debug logging for Stripe customer
+        try {
+            $stripeCustomer = $user->createOrGetStripeCustomer();
+            Log::info('Stripe Customer Object:', [
+                'type' => gettype($stripeCustomer),
+                'class' => is_object($stripeCustomer) ? get_class($stripeCustomer) : 'NOT_OBJECT',
+                'customer_data' => json_encode($stripeCustomer),
+                'has_id' => isset($stripeCustomer->id),
+                'id_value' => $stripeCustomer->id ?? 'NO ID',
+            ]);
+            
+            $customerId = $stripeCustomer->id;
+            Log::info('Customer ID extracted:', ['customer_id' => $customerId, 'type' => gettype($customerId)]);
+        } catch (\Throwable $e) {
+            Log::error('Error creating/getting Stripe customer:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+            ]);
+            
+            return response()->json([
+                'message' => 'Error al crear el cliente de Stripe: ' . $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
 
         $ticketTypes = TicketType::where('sede_id', $sede->id)
             ->whereIn('id', $ticketsPayload->pluck('id'))
@@ -103,6 +129,17 @@ class CheckoutController extends Controller
 
                 $quantity = (int) $ticketInput['quantity'];
 
+                $stripeProductId = $this->normalizeStripeProductId($ticket->stripe_product_id);
+
+                if (blank($stripeProductId)) {
+                    Log::warning('Ticket missing Stripe product ID', [
+                        'ticket_id' => $ticket->id,
+                        'original_product_id' => $ticket->stripe_product_id,
+                    ]);
+
+                    throw new \RuntimeException('La entrada seleccionada no está configurada para Stripe.');
+                }
+
                 TicketOrderItem::create([
                     'ticket_order_id' => $order->id,
                     'item_type' => 'ticket',
@@ -118,7 +155,7 @@ class CheckoutController extends Controller
                     'price_data' => [
                         'currency' => $currency,
                         'unit_amount' => Currency::toStripeAmount($ticket->base_price, $currency),
-                        'product' => $ticket->stripe_product_id,
+                        'product' => $stripeProductId,
                     ],
                 ];
 
@@ -133,6 +170,17 @@ class CheckoutController extends Controller
                 }
 
                 $quantity = (int) $addonInput['quantity'];
+
+                $stripeAddonProductId = $this->normalizeStripeProductId($addon->stripe_product_id);
+
+                if (blank($stripeAddonProductId)) {
+                    Log::warning('Addon missing Stripe product ID', [
+                        'addon_id' => $addon->id,
+                        'original_product_id' => $addon->stripe_product_id,
+                    ]);
+
+                    throw new \RuntimeException('Un producto adicional no está configurado para Stripe.');
+                }
 
                 TicketOrderItem::create([
                     'ticket_order_id' => $order->id,
@@ -149,7 +197,7 @@ class CheckoutController extends Controller
                     'price_data' => [
                         'currency' => $currency,
                         'unit_amount' => Currency::toStripeAmount($addon->price, $currency),
-                        'product' => $addon->stripe_product_id,
+                        'product' => $stripeAddonProductId,
                     ],
                 ];
 
@@ -172,9 +220,17 @@ class CheckoutController extends Controller
             $order->delete();
 
             return response()->json([
-                'message' => 'Debes seleccionar al menos una entrada válida.',
+                'message' => 'Debes seleccionar al menos una entrada.',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        Log::info('Creating Stripe checkout session:', [
+            'customer_id' => $customerId,
+            'customer_id_type' => gettype($customerId),
+            'order_uuid' => $order->uuid,
+            'line_items_count' => count($lineItems),
+            'total_amount' => $orderTotal,
+        ]);
 
         try {
             $session = Cashier::stripe()->checkout->sessions->create([
@@ -195,12 +251,26 @@ class CheckoutController extends Controller
                 'stripe_session_id' => $session->id,
                 'stripe_client_secret' => $session->client_secret,
             ]);
+            
+            Log::info('Stripe checkout session created successfully:', [
+                'session_id' => $session->id,
+                'order_uuid' => $order->uuid,
+            ]);
         } catch (\Throwable $exception) {
+            Log::error('Failed to create Stripe checkout session:', [
+                'message' => $exception->getMessage(),
+                'code' => $exception->getCode(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'customer_id' => $customerId,
+                'order_uuid' => $order->uuid,
+            ]);
+            
             report($exception);
             $order->delete();
 
             return response()->json([
-                'message' => 'No fue posible iniciar el pago. Intenta nuevamente en unos minutos.',
+                'message' => 'No fue posible iniciar el pago: ' . $exception->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -297,5 +367,14 @@ class CheckoutController extends Controller
     public function failure(): RedirectResponse
     {
         return redirect()->route('payments.create')->with('checkout_error', 'Tu pago no pudo completarse. Intenta nuevamente.');
+    }
+
+    private function normalizeStripeProductId(?string $productId): ?string
+    {
+        if (blank($productId)) {
+            return null;
+        }
+
+        return preg_replace('/_(\d+)$/', '', $productId);
     }
 }

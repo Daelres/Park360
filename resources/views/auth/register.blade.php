@@ -117,6 +117,21 @@
         <p class="auth-subtitle">Crear nueva cuenta - Park360</p>
     </div>
 
+    <!-- Validation Errors -->
+    @if ($errors->any())
+        <div style="background: #FFE8E0; border-left: 4px solid #FF6B35; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+            <p style="margin: 0 0 0.5rem 0; color: #C2190F; font-weight: 600; font-size: 0.95rem;">
+                <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>
+                Por favor verifica los siguientes errores:
+            </p>
+            <ul style="margin: 0.5rem 0 0 1.5rem; color: #C2190F; font-size: 0.9rem;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -127,9 +142,6 @@
                 {{ __('Nombre') }}
             </label>
             <x-text-input id="name" class="form-input" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            @error('name')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
         </div>
 
         <!-- Email Address -->
@@ -139,9 +151,6 @@
                 {{ __('Correo Electrónico') }}
             </label>
             <x-text-input id="email" class="form-input" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            @error('email')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
         </div>
 
         <!-- Password -->
@@ -151,9 +160,9 @@
                 {{ __('Contraseña') }}
             </label>
             <x-text-input id="password" class="form-input" type="password" name="password" required autocomplete="new-password" />
-            @error('password')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
+            <small style="color: #718096; font-size: 0.8rem; margin-top: 0.25rem; display: block;">
+                Mínimo 8 caracteres, debe incluir mayúsculas, minúsculas y números.
+            </small>
         </div>
 
         <!-- Confirm Password -->
@@ -163,9 +172,6 @@
                 {{ __('Confirmar Contraseña') }}
             </label>
             <x-text-input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required autocomplete="new-password" />
-            @error('password_confirmation')
-                <div class="error-message">{{ $message }}</div>
-            @enderror
         </div>
 
         <button type="submit" class="register-button">

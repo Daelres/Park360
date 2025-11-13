@@ -33,7 +33,7 @@ class TestCheckoutController extends Controller
         ]);
 
     $user = $request->user();
-    $customerId = $user->createOrGetStripeCustomer();
+    $customerId = $user->createOrGetStripeCustomer()->id;
 
     $currency = $this->stripeCurrency();
     $quantity = (int) ($request->input('cantidad', 1));
