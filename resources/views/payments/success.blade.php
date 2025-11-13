@@ -1,123 +1,153 @@
 @extends('layouts.app')
 
 @section('content')
-    <style>
-        .success-wrapper { display:flex; flex-direction:column; gap:2rem; }
-        .success-header { display:flex; justify-content:space-between; align-items:flex-start; gap:1.5rem; flex-wrap:wrap; }
-        .success-header h1 { margin:0; font-size:2.1rem; color:#2D1B69; }
-        .success-header p { margin:0; color:#6B5B8F; max-width:640px; }
-        .success-grid { display:grid; grid-template-columns:minmax(0, 2fr) minmax(320px, 1fr); gap:2rem; align-items:flex-start; }
-        .success-details { display:flex; flex-direction:column; gap:1.5rem; }
-        .success-meta { display:flex; flex-wrap:wrap; gap:1.5rem; }
-        .success-meta-block { flex:1 1 240px; }
-        .success-meta-label { display:block; color:#6B5B8F; font-weight:600; margin-bottom:0.35rem; }
-        .success-meta-value { color:#2D1B69; font-size:1.2rem; margin:0; }
-        .success-summary-box { border:1px solid rgba(147,181,245,0.2); border-radius:1rem; padding:1.3rem; display:flex; flex-direction:column; gap:1.2rem; background:white; }
-        .success-summary-row { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
-        .success-summary-row > div { flex:1 1 220px; }
-        .success-amount { color:#2D1B69; font-size:1.2rem; font-weight:700; }
-        .success-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.45rem; color:#2D1B69; font-size:0.95rem; }
-        .success-list--empty { color:#9CA3AF; }
-        .success-tips { background:rgba(147,181,245,0.08); border:1px dashed rgba(147,181,245,0.3); }
-        .success-tips h3 { margin:0 0 0.5rem; color:#2D1B69; }
-        .success-tips ul { margin:0; padding-left:1rem; color:#6B5B8F; font-size:0.9rem; display:flex; flex-direction:column; gap:0.4rem; }
-        .success-qr-card { position:sticky; top:1rem; display:flex; flex-direction:column; gap:1rem; align-items:center; text-align:center; }
-        .success-qr-card img { width:240px; max-width:100%; height:auto; border-radius:1rem; border:1px solid rgba(147,181,245,0.25); background:white; padding:0.75rem; }
-        .success-qr-fallback { width:240px; height:240px; border-radius:1rem; border:1px dashed rgba(147,181,245,0.5); display:flex; align-items:center; justify-content:center; color:#9CA3AF; font-size:0.9rem; }
-        .success-code-label { display:block; color:#6B5B8F; font-size:0.85rem; }
-        .success-code-value { color:#2D1B69; font-size:1.1rem; font-weight:700; }
-        .success-qr-card .btn { width:100%; justify-content:center; }
-        @media (max-width: 1024px) {
-            .success-grid { grid-template-columns:1fr; }
-            .success-qr-card { position:static; width:100%; }
-        }
-    </style>
+    <div class="container py-4">
 
-    <div class="success-wrapper">
-        <div class="success-header">
+        {{-- ENCABEZADO --}}
+        <div class="d-flex flex-wrap justify-content-between align-items-start mb-4 gap-3 text-center">
             <div>
-                <h1>¡Compra exitosa!</h1>
-                <p>Estos son los detalles de tu visita. Presenta el código QR en la entrada del parque para agilizar tu ingreso.</p>
+                <h1 class="m-2" style="font-size:2.1rem;color:#2D1B69;">¡Compra exitosa!</h1>
             </div>
-            <a href="{{ route('payments.create') }}" class="btn btn-secondary">Planear otra visita</a>
         </div>
 
-        <div class="success-grid">
-            <section class="card success-details">
-                <div class="success-meta">
-                    <div class="success-meta-block">
-                        <span class="success-meta-label">Número de orden</span>
-                        <p class="success-meta-value">#{{ strtoupper($order->uuid) }}</p>
-                    </div>
-                    <div class="success-meta-block" style="text-align:right;">
-                        <span class="success-meta-label" style="font-size:0.85rem;">Fecha de compra</span>
-                        <p class="success-meta-value" style="font-size:1rem;">
-                            {{ optional($order->paid_at, fn ($date) => $date->timezone(config('app.timezone'))->translatedFormat('l j \d\e F Y H:i')) }}
+        {{-- CONTENIDO PRINCIPAL --}}
+        <div class="row g-4">
+
+            {{-- COLUMNA PRINCIPAL --}}
+            <div class="col-lg-8">
+
+                <div class="card p-4">
+                    <div class="text-center card" style="font-size:1.1rem; background-color: #2fff9e">
+                        <p class="m-2">
+                            Estos son los detalles de tu visita. Presenta el código QR en la entrada del parque para agilizar tu
+                            ingreso.
                         </p>
                     </div>
-                </div>
 
-                <article class="success-summary-box">
-                    <div class="success-summary-row">
+                    {{-- CABECERA DE ORDEN --}}
+                    <div class="d-flex justify-content-between align-items-start mb-4 mt-4 flex-wrap gap-3">
                         <div>
-                            <span class="success-meta-label">Visita agendada</span>
-                            <p class="success-meta-value" style="font-size:1.1rem;">
-                                {{ optional($order->visitDate?->visit_date, fn ($date) => $date->translatedFormat('l j \d\e F Y')) }}
-                            </p>
+                            <span class="text-muted fw-semibold" style="color:#6B5B8F;">Número de orden</span>
+                            <h2 class="m-0" style="color:#2D1B69;">#{{ strtoupper($order->uuid) }}</h2>
                         </div>
-                        <div style="text-align:right;">
-                            <span class="success-meta-label">Importe total</span>
-                            <span class="success-amount">${{ number_format($order->total_amount, 0, ',', '.') }}</span>
+
+                        <div class="text-end mb-4">
+                            <span class="d-block text-muted"
+                                  style="font-size:0.85rem;color:#6B5B8F;">Fecha de compra</span>
+                            <strong style="color:#2D1B69;">
+                                {{ optional($order->paid_at, fn ($date) => $date->timezone(config('app.timezone'))->translatedFormat('l j \d\e F Y H:i')) }}
+                            </strong>
+                        </div>
+
+                        {{-- COLUMNA QR --}}
+                        <div class="col-lg-4 mb-4">
+
+                            <div class="card justify-center p-4 text-center position-sticky" style="top:1rem;">
+
+                                <span class="fw-semibold d-block mb-2" style="color:#6B5B8F;">Tu pase digital</span>
+
+                                @if($order->qr_code_path)
+                                    <img src="{{ asset('storage/'.$order->qr_code_path) }}"
+                                         alt="Código QR de la visita"
+                                         class="img-fluid mb-3"
+                                         style="max-width:240px;border-radius:1rem;border:1px solid rgba(147,181,245,0.25);background:white;padding:0.75rem;">
+                                @else
+                                    <div class="d-flex justify-content-center align-items-center mb-3"
+                                         style="width:240px;height:240px;border-radius:1rem;border:1px dashed rgba(147,181,245,0.5);color:#9CA3AF;">
+                                        QR no disponible
+                                    </div>
+                                @endif
+
+                                <div class="mb-3">
+                                    <span class="d-block text-muted" style="font-size:0.85rem;color:#6B5B8F;">Código de verificación</span>
+                                    <strong style="color:#2D1B69;font-size:1.1rem;">
+                                        {{ $order->qr_code_token }}
+                                    </strong>
+                                </div>
+
+                                @if($order->qr_code_path)
+                                    <a href="{{ asset('storage/'.$order->qr_code_path) }}"
+                                       class="btn btn-primary w-100 mb-2" download>
+                                        Descargar QR
+                                    </a>
+                                @endif
+
+                                <p class="m-0" style="color:#9CA3AF;font-size:0.8rem;">
+                                    Conserva el QR para cualquier control durante tu visita.
+                                </p>
+
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <span class="success-meta-label" style="margin-bottom:0.4rem;">Entradas</span>
-                        <ul class="success-list">
-                            @foreach($order->items->where('item_type', 'ticket') as $item)
-                                <li>{{ $item->name }} × {{ $item->quantity }} — ${{ number_format($item->unit_amount * $item->quantity, 0, ',', '.') }}</li>
-                            @endforeach
+                    {{-- RESUMEN DE COMPRA --}}
+                    <div class="border rounded p-3 mb-4" style="border-color:rgba(147,181,245,0.2);">
+                        <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-3 text-center">
+                            <div class="mt-4">
+                                <span class="fw-semibold" style="color:#6B5B8F;">Visita agendada</span>
+                                <div class="fw-bold" style="color:#2D1B69;font-size:1.1rem;">
+                                    {{ optional($order->visitDate?->visit_date, fn ($date) => $date->translatedFormat('l j \d\e F Y')) }}
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <span class="fw-semibold" style="color:#6B5B8F;">Importe total</span>
+                                <div class="fw-bold" style="color:#2D1B69;font-size:1.2rem;">
+                                    ${{ number_format($order->total_amount, 0, ',', '.') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Entradas --}}
+                        <div class="mb-3 text-center">
+                            <span class="fw-semibold d-block mb-2" style="color:#6B5B8F;">Entradas</span>
+                            <ul class="list-unstyled m-0 ps-0">
+                                @foreach($order->items->where('item_type', 'ticket') as $item)
+                                    <li class="mb-1" style="color:#2D1B69;font-size:0.95rem;">
+                                        {{ $item->name }} × {{ $item->quantity }} —
+                                        ${{ number_format($item->unit_amount * $item->quantity, 0, ',', '.') }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+
+                        {{-- Adicionales --}}
+                        <div class="text-center mb-4">
+                            <span class="fw-semibold d-block mb-2" style="color:#6B5B8F;">Adicionales</span>
+                            <ul class="list-unstyled m-0 ps-0">
+                                @forelse($order->items->where('item_type', 'addon') as $item)
+                                    <li class="mb-1" style="color:#2D1B69;font-size:0.95rem;">
+                                        {{ $item->name }} × {{ $item->quantity }} —
+                                        ${{ number_format($item->unit_amount * $item->quantity, 0, ',', '.') }}
+                                    </li>
+                                @empty
+                                    <li style="color:#9CA3AF;">Sin productos adicionales</li>
+                                @endforelse
+                            </ul>
+                        </div>
+                    </div>
+
+                    {{-- RECOMENDACIONES --}}
+                    <div class="card p-3"
+                         style="background:rgba(147,181,245,0.08);border:1px dashed rgba(147,181,245,0.3);">
+                        <h3 class="mb-3" style="color:#2D1B69;">Recomendaciones</h3>
+                        <ul class="mb-0 ps-3" style="color:#6B5B8F;font-size:0.9rem;">
+                            <li>Presenta el código QR desde tu móvil o impreso al ingresar.</li>
+                            <li>Llega 15 minutos antes de la hora planificada para agilizar tu check-in.</li>
+                            <li>Si necesitas cambiar la fecha, contáctanos con el número de orden.</li>
                         </ul>
                     </div>
 
-                    <div>
-                        <span class="success-meta-label" style="margin-bottom:0.4rem;">Adicionales</span>
-                        <ul class="success-list">
-                            @forelse($order->items->where('item_type', 'addon') as $item)
-                                <li>{{ $item->name }} × {{ $item->quantity }} — ${{ number_format($item->unit_amount * $item->quantity, 0, ',', '.') }}</li>
-                            @empty
-                                <li class="success-list--empty">Sin productos adicionales</li>
-                            @endforelse
-                        </ul>
+                    <div class="text-center mt-4">
+                        <a href="{{ route('payments.create') }}" class="btn btn-secondary">
+                            Planear otra visita
+                        </a>
                     </div>
-                </article>
 
-                <div class="card success-tips">
-                    <h3>Recomendaciones</h3>
-                    <ul>
-                        <li>Presenta el código QR desde tu móvil o impreso al ingresar.</li>
-                        <li>Llega 15 minutos antes de la hora planificada para agilizar tu check-in.</li>
-                        <li>Si necesitas cambiar la fecha, contáctanos con el número de orden.</li>
-                    </ul>
-                </div>
-            </section>
 
-            <aside class="card success-qr-card">
-                <span style="color:#6B5B8F;font-weight:600;">Tu pase digital</span>
-                @if($order->qr_code_path)
-                    <img src="{{ asset('storage/'.$order->qr_code_path) }}" alt="Código QR de la visita" />
-                @else
-                    <div class="success-qr-fallback">QR no disponible</div>
-                @endif
-                <div>
-                    <span class="success-code-label">Código de verificación</span>
-                    <span class="success-code-value">{{ $order->qr_code_token }}</span>
                 </div>
-                @if($order->qr_code_path)
-                    <a href="{{ asset('storage/'.$order->qr_code_path) }}" class="btn" download>Descargar QR</a>
-                @endif
-                <p style="margin:0;color:#9CA3AF;font-size:0.8rem;">Conserva el QR para cualquier control durante tu visita.</p>
-            </aside>
+            </div>
+
         </div>
     </div>
 @endsection
