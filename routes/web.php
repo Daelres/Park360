@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\Admin\AtraccionController as AdminAtraccionController;
 use App\Http\Controllers\Admin\SedeController as AdminSedeController;
+use App\Http\Controllers\Admin\AnaliticaController as AdminAnaliticaController;
 use App\Http\Controllers\Admin\ReporteController as AdminReporteController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
@@ -47,8 +48,15 @@ Route::middleware('auth')->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::redirect('/', '/admin/sedes');
     Route::get('/users/myProfile', [AdminUsersController::class, 'index'])->name('myProfile');
+    // Gestión de usuarios, roles y permisos
+    Route::get('/usuarios', [AdminUsersController::class, 'manage'])->name('users.index');
+    Route::post('/usuarios/{user}/roles', [AdminUsersController::class, 'assignRole'])
+        ->name('users.roles.assign');
+    Route::post('/roles', [AdminUsersController::class, 'storeRole'])->name('roles.store');
     Route::resource('sedes', AdminSedeController::class);
     Route::resource('atracciones', AdminAtraccionController::class);
+    // Analítica de aplicación (solo administradores)
+    Route::get('analitica', [AdminAnaliticaController::class, 'index'])->name('analitica.index');
 });
 
 // Reportes: accesible para cualquier usuario autenticado (no requiere rol admin)
