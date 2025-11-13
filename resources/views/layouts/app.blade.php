@@ -450,13 +450,25 @@
         <div class="logo">
             <img src="{{ asset('images/ChatGPT Image 12 nov 2025, 23_37_27.png') }}" alt="Park360 Logo" />
         </div>
-        <nav>
-            <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
-            <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
-            <a href="{{ route('payments.create') }}"><i class="fas fa-wallet"></i> Pagos</a>
-            <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
-            <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
-        </nav>
+            <nav>
+                <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
+                <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
+                <a href="{{ route('payments.create') }}"><i class="fas fa-wallet"></i> Pagos</a>
+                @auth
+                <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
+                <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
+                <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-sliders-h"></i> Mi cuenta</a>
+                @endauth
+            </nav>
+
+        @guest
+            <nav>
+                <a href="{{ route('login') }}" class="btn secondary">Iniciar sesión</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="btn">Registrarse</a>
+                @endif
+            </nav>
+        @endguest
     </header>
     <main>
         @if (session('status'))

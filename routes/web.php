@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::redirect('/', '/admin/sedes');
+    Route::redirect('/profile', '/admin/profile');
     Route::resource('sedes', AdminSedeController::class);
     Route::resource('atracciones', AdminAtraccionController::class);
 });
