@@ -655,7 +655,13 @@
         @php
             $user = auth()->user();
             $isAdmin = $user && method_exists($user, 'hasRole') && $user->hasRole('admin');
+            $isEmployee = $user && method_exists($user, 'hasRole') && $user->hasRole('employee');
+            $isStaff = $isAdmin || $isEmployee;
         @endphp
+
+        @if ($isStaff)
+            <a href="{{ route('dashboard') }}"><i class="fas fa-chart-line"></i> Dashboard</a>
+        @endif
 
         @if ($isAdmin)
             <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>

@@ -26,9 +26,7 @@ class DatabaseSeeder extends Seeder
             UsersSeeder::class,
             RolSeeder::class,
             PermisoSeeder::class,
-            SedesSeeder::class,
             ZonaSeeder::class,
-            SedesSeeder::class,  // Movido antes de AtraccionSeeder
             AtraccionSeeder::class,
             VisitDateSeeder::class,
             TicketCatalogSeeder::class,
@@ -51,7 +49,7 @@ class DatabaseSeeder extends Seeder
             IncidenteSeeder::class,
             LecturaColaSeeder::class,
             MantenimientoSeeder::class,
-            PagoSeeder::class,
+            PaymentSeeder::class,  // Nuevo seeder de pagos realistas
             ReembolsoSeeder::class,
             TareaOperativaSeeder::class,
             TarifaSeeder::class,

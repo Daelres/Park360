@@ -2,6 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Sede;
+use App\Models\TicketOrderItem;
+use App\Models\User;
+use App\Models\VisitCheckIn;
+use App\Models\VisitDate;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -74,7 +80,7 @@ class TicketOrder extends Model
         return $this->hasMany(VisitCheckIn::class);
     }
 
-    public function scopePaid($query)
+    public function scopePaid(Builder $query): Builder
     {
         return $query->where('status', self::STATUS_PAID);
     }
