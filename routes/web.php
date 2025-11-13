@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ReporteController as AdminReporteController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Payments\TestCheckoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\VisitCheckInController;
@@ -30,9 +31,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/visitas/scan', [VisitCheckInController::class, 'create'])->name('visit-scan.create');
     Route::post('/visitas/scan', [VisitCheckInController::class, 'store'])->name('visit-scan.store');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware('verified')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'show'])
+        ->middleware('verified')
+        ->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

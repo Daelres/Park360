@@ -42,10 +42,14 @@ class AtraccionController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
         return view('admin.atracciones.create', [
             'sedes' => Sede::orderBy('nombre')->pluck('nombre', 'id'),
+            // Pasamos una instancia vacía para evitar instanciar el modelo en la vista
+            'atraccion' => new Atraccion(),
+            // Selección inicial de sede proveniente de la petición (si aplica)
+            'selectedSedeId' => $request->integer('sede_id') ?: null,
         ]);
     }
 
