@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::table('atraccion', function (Blueprint $table) {
@@ -25,10 +24,22 @@ return new class extends Migration
         });
 
         // Try to copy data from legacy columns when present
-        try { DB::statement('UPDATE `atraccion` SET `nombre` = `Nombre` WHERE `nombre` IS NULL OR `nombre` = ""'); } catch (\Throwable $e) {}
-        try { DB::statement('UPDATE `atraccion` SET `capacidad` = `Capacidad` WHERE `capacidad` IS NULL'); } catch (\Throwable $e) {}
-        try { DB::statement('UPDATE `atraccion` SET `estado_operativo` = `Estado Operativo` WHERE `estado_operativo` IS NULL OR `estado_operativo` = ""'); } catch (\Throwable $e) {}
-        try { DB::statement('UPDATE `atraccion` SET `ubicacion_gps` = `Ubicación_gps` WHERE `ubicacion_gps` IS NULL OR `ubicacion_gps` = ""'); } catch (\Throwable $e) {}
+        try {
+            DB::statement('UPDATE `atraccion` SET `nombre` = `Nombre` WHERE `nombre` IS NULL OR `nombre` = ""');
+        } catch (\Throwable $e) {
+        }
+        try {
+            DB::statement('UPDATE `atraccion` SET `capacidad` = `Capacidad` WHERE `capacidad` IS NULL');
+        } catch (\Throwable $e) {
+        }
+        try {
+            DB::statement('UPDATE `atraccion` SET `estado_operativo` = `Estado Operativo` WHERE `estado_operativo` IS NULL OR `estado_operativo` = ""');
+        } catch (\Throwable $e) {
+        }
+        try {
+            DB::statement('UPDATE `atraccion` SET `ubicacion_gps` = `Ubicación_gps` WHERE `ubicacion_gps` IS NULL OR `ubicacion_gps` = ""');
+        } catch (\Throwable $e) {
+        }
 
         // Drop legacy columns if still present
         Schema::table('atraccion', function (Blueprint $table) {

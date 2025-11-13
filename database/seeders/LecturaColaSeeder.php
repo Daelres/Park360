@@ -41,12 +41,12 @@ class LecturaColaSeeder extends Seeder
             $tiempoEspera = $personas === 0 ? 0 : intval($personas / rand(3, 6));
 
             $lecturas[] = [
-                'atraccion_id'       => $atracciones[array_rand($atracciones)],
-                'personas_en_cola'   => $personas,
-                'tiempo_espera_min'  => $tiempoEspera,
-                'fuente'             => $fuentes[array_rand($fuentes)],
-                'created_at'         => $fechaLectura,
-                'updated_at'         => $fechaLectura,
+                'atraccion_id' => $atracciones[array_rand($atracciones)],
+                'personas_en_cola' => $personas,
+                'tiempo_espera_min' => $tiempoEspera,
+                'fuente' => $fuentes[array_rand($fuentes)],
+                'created_at' => $fechaLectura,
+                'updated_at' => $fechaLectura,
             ];
         }
 

@@ -13,7 +13,7 @@ class TareaOperativaSeeder extends Seeder
 
         // Obtener IDs existentes
         $atractivos = DB::table('atraccion')->pluck('id')->toArray();
-        $usuarios   = DB::table('users')->pluck('id')->toArray();
+        $usuarios = DB::table('users')->pluck('id')->toArray();
 
         if (empty($atractivos) || empty($usuarios)) {
             dd("⚠ No existen atracciones o usuarios para generar tareas operativas.");
@@ -62,16 +62,16 @@ class TareaOperativaSeeder extends Seeder
         for ($i = 0; $i < 120; $i++) {
 
             $tareas[] = [
-                'atractivo_id'  => $atractivos[array_rand($atractivos)],
-                'asignada_a'    => $usuarios[array_rand($usuarios)],
-                'titulo'        => $titulos[array_rand($titulos)],
-                'prioridad'     => $prioridades[array_rand($prioridades)],
-                'estado'        => $estados[array_rand($estados)],
-                'sla_horas'     => rand(2, 48),
-                'origen'        => $origenes[array_rand($origenes)],
-                'vencimiento_at'=> now()->addDays(rand(0, 10))->toDateString(),
-                'created_at'    => $now,
-                'updated_at'    => $now,
+                'atractivo_id' => $atractivos[array_rand($atractivos)],
+                'asignada_a' => $usuarios[array_rand($usuarios)],
+                'titulo' => $titulos[array_rand($titulos)],
+                'prioridad' => $prioridades[array_rand($prioridades)],
+                'estado' => $estados[array_rand($estados)],
+                'sla_horas' => rand(2, 48),
+                'origen' => $origenes[array_rand($origenes)],
+                'vencimiento_at' => now()->addDays(rand(0, 10))->toDateString(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 

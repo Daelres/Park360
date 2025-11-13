@@ -58,16 +58,16 @@ class PagoSeeder extends Seeder
                 : null;
 
             $pagos[] = [
-                'orden_id'      => $ordenes[array_rand($ordenes)],
-                'proveedor'     => $proveedores[array_rand($proveedores)],
-                'monto'         => rand(50000, 350000),
-                'moneda'        => 'COP',
-                'estado'        => $estado,
-                'aut_code'      => $autCode,
-                'trans_id_ext'  => $transExt,
-                'paid_at'       => $paidAt,
-                'created_at'    => $now,
-                'updated_at'    => $now,
+                'orden_id' => $ordenes[array_rand($ordenes)],
+                'proveedor' => $proveedores[array_rand($proveedores)],
+                'monto' => rand(50000, 350000),
+                'moneda' => 'COP',
+                'estado' => $estado,
+                'aut_code' => $autCode,
+                'trans_id_ext' => $transExt,
+                'paid_at' => $paidAt,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 

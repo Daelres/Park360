@@ -37,16 +37,16 @@ class SedesSeeder extends Seeder
             $nombre = $nombresSede[array_rand($nombresSede)] . " - " . $ciudad;
 
             $sedes[] = [
-                'codigo'          => 'SED-' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'nombre'          => $nombre,
-                'ciudad'          => $ciudad,
-                'direccion'       => 'Calle ' . rand(1, 150) . ' # ' . rand(1, 50) . '-' . rand(1, 90),
-                'telefono'        => '+57 3' . rand(100000000, 999999999),
+                'codigo' => 'SED-' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'nombre' => $nombre,
+                'ciudad' => $ciudad,
+                'direccion' => 'Calle ' . rand(1, 150) . ' # ' . rand(1, 50) . '-' . rand(1, 90),
+                'telefono' => '+57 3' . rand(100000000, 999999999),
                 'correo_contacto' => 'contacto' . $i . '@sedespark360.com',
-                'descripcion'     => 'Sede ubicada en ' . $ciudad . ' especializada en entretenimiento y actividades familiares.',
-                'gerente'         => 'Gerente ' . $ciudad,
-                'created_at'      => $now,
-                'updated_at'      => $now,
+                'descripcion' => 'Sede ubicada en ' . $ciudad . ' especializada en entretenimiento y actividades familiares.',
+                'gerente' => 'Gerente ' . $ciudad,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
         }
 
