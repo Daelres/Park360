@@ -35,6 +35,6 @@ class Incidente extends Model
 
     public function reportadoPor(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'reportado_por_id');
+        return $this->belongsTo(User::class, 'reportado_por_id');
     }
 }

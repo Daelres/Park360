@@ -12,7 +12,7 @@ class OrdenSeeder extends Seeder
         $now = now();
         $clientes = DB::table('cliente')->pluck('id', 'email');
 
-        DB::table('orden')->insert([
+        DB::table('orden')->upsert([
             [
                 'cliente_id' => $clientes['cliente1@example.com'] ?? 1,
                 'numero_orden' => 'ORD-10001',
@@ -33,6 +33,6 @@ class OrdenSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
-        ]);
+        ], ['numero_orden'], ['cliente_id', 'estado', 'total', 'canal', 'ip_cliente', 'updated_at']);
     }
 }

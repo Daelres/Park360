@@ -10,14 +10,14 @@ class SesionSSOSeeder extends Seeder
     public function run(): void
     {
         $now = now();
-        $usuarios = DB::table('usuarios')->pluck('id', 'email');
+        $usuarios = DB::table('users')->pluck('id', 'email');
 
         $rows = [];
         if (isset($usuarios['admin@park360.test'])) {
             $rows[] = [
-                'usuario_id' => $usuarios['admin@park360.test'],
+                'user_id' => $usuarios['admin@park360.test'],
                 'proveedor' => 'keycloak',
-                'oidc_sub' => 'sub-admin-'.uniqid(),
+                'oidc_sub' => 'sub-admin-demo',
                 'exp_at' => now()->addHours(2),
                 'refresh_token' => null,
                 'created_at' => $now,
@@ -26,9 +26,9 @@ class SesionSSOSeeder extends Seeder
         }
         if (isset($usuarios['operador@park360.test'])) {
             $rows[] = [
-                'usuario_id' => $usuarios['operador@park360.test'],
+                'user_id' => $usuarios['operador@park360.test'],
                 'proveedor' => 'keycloak',
-                'oidc_sub' => 'sub-operador-'.uniqid(),
+                'oidc_sub' => 'sub-operador-demo',
                 'exp_at' => now()->addHours(2),
                 'refresh_token' => null,
                 'created_at' => $now,
@@ -37,7 +37,7 @@ class SesionSSOSeeder extends Seeder
         }
 
         if (!empty($rows)) {
-            DB::table('sesion_s_s_o')->insert($rows);
+            DB::table('sesion_s_s_o')->upsert($rows, ['user_id', 'proveedor'], ['oidc_sub', 'exp_at', 'refresh_token', 'updated_at']);
         }
     }
 }
