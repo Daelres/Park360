@@ -14,7 +14,7 @@
             <section class="card" style="min-height:420px;display:flex;flex-direction:column;gap:1rem;">
                 <h2 style="margin:0;color:#2D1B69;">Pago seguro con Stripe</h2>
                 <div id="checkout-status" style="color:#6B5B8F;font-size:0.95rem;">Preparando el formulario…</div>
-                <div id="embedded-checkout" style="flex:1;min-height:360px;border:1px solid rgba(147,181,245,0.3);border-radius:1rem;overflow:hidden;background:white;"></div>
+                <div id="embedded-checkout" style="flex:1;min-height:360px;border:1px solid rgba(147,181,245,0.3);border-radius:1rem;overflow:hidden;background:white;margin:2rem auto;width:100%;max-width:540px;padding:0.75rem 0.5rem;"></div>
             </section>
 
             <aside class="card" style="position:sticky;top:1rem;display:flex;flex-direction:column;gap:1rem;">

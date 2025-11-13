@@ -3,14 +3,21 @@
 @section('content')
     <style>
         #toast {
-            position: sticky;
-            top: 1rem;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
             z-index: 50;
             padding: 0.85rem 1.2rem;
             border-radius: 0.75rem;
             font-weight: 600;
             box-shadow: 0 20px 45px rgba(45, 27, 105, 0.15);
-            align-self: flex-start;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #toast.toast-visible {
+            opacity: 1;
+            pointer-events: auto;
         }
         .toast { display: inline-flex; align-items: center; gap: 0.75rem; }
         .toast-success { background: rgba(76, 175, 80, 0.15); color: #1B5E20; border: 1px solid rgba(76, 175, 80, 0.3); }
@@ -19,7 +26,7 @@
         .toast-info { background: rgba(79, 70, 229, 0.1); color: #312E81; border: 1px solid rgba(79, 70, 229, 0.2); }
     </style>
     <div class="flex flex-col gap-6">
-        <div id="toast" class="hidden"></div>
+    <div id="toast"></div>
 
         <div class="flex items-center justify-between flex-wrap gap-3">
             <div>
@@ -155,6 +162,48 @@
             return new Date(now.getTime() - offset).toISOString().slice(0, 10);
         }
 
+        function formatDateLabel(value) {
+            if (!value) {
+                return null;
+            }
+
+            try {
+                const parsed = new Date(value);
+                if (Number.isNaN(parsed.getTime())) {
+                    return value;
+                }
+
+                const formatted = dateFormatter.format(parsed);
+                return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+            } catch (error) {
+                return value;
+            }
+        }
+
+        function extractErrorMessage(payload, fallback) {
+            if (!payload) {
+                return fallback;
+            }
+
+            if (payload.message === 'The given data was invalid.' && payload.errors) {
+                const firstError = Object.values(payload.errors)[0];
+                if (Array.isArray(firstError) && firstError.length) {
+                    return firstError[0];
+                }
+                return 'La información proporcionada no es válida.';
+            }
+
+            if (payload.message) {
+                if (payload.message === 'The given data was invalid.') {
+                    return 'La información proporcionada no es válida.';
+                }
+
+                return payload.message;
+            }
+
+            return fallback;
+        }
+
         const formatter = new Intl.NumberFormat('es-CO', {
             style: 'currency',
             currency: 'COP',
@@ -170,17 +219,24 @@
         });
 
         const toastEl = document.getElementById('toast');
+        let toastTimeoutId = null;
         function showToast(message, type = 'info') {
             if (!toastEl) return;
-            toastEl.textContent = message;
-            toastEl.className = '';
-            toastEl.classList.add('toast');
-            toastEl.classList.add(`toast-${type}`);
-            toastEl.classList.remove('hidden');
 
-            setTimeout(() => {
-                toastEl.classList.add('hidden');
-            }, 5000);
+            if (toastTimeoutId) {
+                clearTimeout(toastTimeoutId);
+                toastTimeoutId = null;
+            }
+
+            toastEl.textContent = message;
+            toastEl.className = 'toast';
+            toastEl.classList.add(`toast-${type}`);
+            toastEl.classList.add('toast-visible');
+
+            toastTimeoutId = setTimeout(() => {
+                toastEl.classList.remove('toast-visible');
+                toastTimeoutId = null;
+            }, 3000);
         }
 
         function syncSummary() {
@@ -189,17 +245,7 @@
             const addonsList = document.getElementById('summary-addons');
             const totalEl = document.getElementById('summary-total');
 
-            let label = state.visitDateLabel;
-            if (!label && state.visitDateValue) {
-                try {
-                    const parsed = new Date(state.visitDateValue);
-                    const formatted = dateFormatter.format(parsed);
-                    label = formatted.charAt(0).toUpperCase() + formatted.slice(1);
-                } catch (error) {
-                    label = state.visitDateValue;
-                }
-            }
-
+            const label = state.visitDateLabel ?? formatDateLabel(state.visitDateValue);
             summaryDate.textContent = label ?? 'Selecciona una fecha';
 
             ticketsList.innerHTML = '';
@@ -265,17 +311,46 @@
             });
         }
 
-        async function ensureVisitDate(dateValue, options = {}) {
-            const { silent = false } = options;
-
-            const todayValue = getTodayValue();
-
-            if (!dateValue) {
+        function setVisitDateState(value) {
+            if (!value) {
                 state.visitDateId = null;
                 state.visitDateValue = null;
                 state.visitDateLabel = null;
                 syncSummary();
                 return;
+            }
+
+            const normalized = String(value);
+            state.visitDateValue = normalized;
+
+            const existing = catalog.visitDates.find((item) => item.value === normalized);
+
+            if (existing) {
+                state.visitDateId = existing.id;
+                state.visitDateLabel = existing.label;
+            } else {
+                state.visitDateId = null;
+                state.visitDateLabel = formatDateLabel(normalized);
+            }
+
+            syncSummary();
+        }
+
+        async function ensureVisitDate(dateValue, options = {}) {
+            const { silent = false, createIfMissing = true } = options;
+            const todayValue = getTodayValue();
+
+            if (!dateValue) {
+                if (!silent) {
+                    showToast('Selecciona una fecha antes de continuar.', 'warning');
+                }
+
+                state.visitDateId = null;
+                state.visitDateValue = null;
+                state.visitDateLabel = null;
+                syncSummary();
+
+                return false;
             }
 
             const normalized = String(dateValue);
@@ -285,21 +360,12 @@
                     showToast('La fecha debe ser hoy o posterior.', 'warning');
                 }
 
-                const input = document.getElementById('visit-date');
-                if (input && input.value !== todayValue) {
-                    input.value = todayValue;
-                }
-
                 state.visitDateId = null;
                 state.visitDateValue = null;
                 state.visitDateLabel = null;
                 syncSummary();
 
-                if (normalized !== todayValue) {
-                    await ensureVisitDate(todayValue, { silent: true });
-                }
-
-                return;
+                return false;
             }
 
             const existing = catalog.visitDates.find((item) => item.value === normalized);
@@ -309,7 +375,17 @@
                 state.visitDateValue = existing.value;
                 state.visitDateLabel = existing.label;
                 syncSummary();
-                return;
+
+                return true;
+            }
+
+            if (!createIfMissing) {
+                state.visitDateId = null;
+                state.visitDateValue = normalized;
+                state.visitDateLabel = formatDateLabel(normalized);
+                syncSummary();
+
+                return false;
             }
 
             const formData = new FormData();
@@ -328,7 +404,8 @@
                 const payload = await response.json().catch(() => null);
 
                 if (!response.ok || !payload) {
-                    throw new Error(payload?.message ?? 'No se pudo crear la fecha.');
+                    const message = extractErrorMessage(payload, 'No se pudo crear la fecha.');
+                    throw new Error(message);
                 }
 
                 catalog.visitDates.push(payload);
@@ -339,18 +416,19 @@
                 state.visitDateLabel = payload.label;
                 syncSummary();
 
-                if (!silent) {
-                    showToast('Nueva fecha creada y seleccionada.', 'success');
-                }
+                return true;
             } catch (error) {
                 console.error(error);
                 state.visitDateId = null;
                 state.visitDateValue = normalized;
-                state.visitDateLabel = null;
+                state.visitDateLabel = formatDateLabel(normalized);
+                syncSummary();
 
                 if (!silent) {
                     showToast(error.message ?? 'Ocurrió un error al crear la fecha.', 'error');
                 }
+
+                return false;
             }
         }
 
@@ -359,25 +437,44 @@
             if (!input) return;
 
             input.addEventListener('change', () => {
-                ensureVisitDate(input.value);
+                const todayValue = getTodayValue();
+                const value = input.value;
+
+                if (value && value < todayValue) {
+                    showToast('La fecha debe ser hoy o posterior.', 'warning');
+                    input.value = todayValue;
+                    setVisitDateState(todayValue);
+                    return;
+                }
+
+                setVisitDateState(value || null);
             });
 
             if (input.value) {
-                ensureVisitDate(input.value, { silent: true });
+                const todayValue = getTodayValue();
+                if (input.value < todayValue) {
+                    input.value = todayValue;
+                    setVisitDateState(todayValue);
+                } else {
+                    setVisitDateState(input.value);
+                }
             } else {
-                syncSummary();
+                setVisitDateState(null);
             }
         }
 
         async function goToCheckout() {
             const input = document.getElementById('visit-date');
+            const targetValue = state.visitDateValue || (input ? input.value : null);
 
-            if (!state.visitDateId && input && input.value) {
-                await ensureVisitDate(input.value, { silent: true });
+            if (!targetValue) {
+                showToast('Selecciona una fecha antes de continuar.', 'warning');
+                return;
             }
 
-            if (!state.visitDateId) {
-                showToast('Selecciona una fecha antes de continuar.', 'warning');
+            const ready = await ensureVisitDate(targetValue, { silent: false, createIfMissing: true });
+
+            if (!ready) {
                 return;
             }
 
@@ -411,10 +508,11 @@
                     body: JSON.stringify(payload),
                 });
 
-                const data = await response.json();
+                const data = await response.json().catch(() => null);
 
-                if (!response.ok) {
-                    throw new Error(data.message ?? 'No se pudo iniciar el pago.');
+                if (!response.ok || !data) {
+                    const message = extractErrorMessage(data, 'No se pudo iniciar el pago.');
+                    throw new Error(message);
                 }
 
                 window.location.href = data.redirect_url;
@@ -427,6 +525,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             attachQuantityHandlers('.ticket-card', state.tickets);
             attachQuantityHandlers('.addon-card', state.addons);
+
+            const dateInput = document.getElementById('visit-date');
+            if (dateInput) {
+                dateInput.min = getTodayValue();
+            }
+
             handleVisitDateInput();
             syncSummary();
 
