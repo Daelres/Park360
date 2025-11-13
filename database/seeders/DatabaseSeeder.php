@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             PermisoSeeder::class,
             ZonaSeeder::class,
             AtraccionSeeder::class,
+            VisitDateSeeder::class,
+            TicketCatalogSeeder::class,
             TipoTicketSeeder::class,
             EmpleadoSeeder::class,
             PermisoRolSeeder::class,
