@@ -24,7 +24,6 @@
                 <li><strong>Capacidad:</strong> {{ $atraccion->capacidad }} personas</li>
                 <li><strong>Estado:</strong> {{ $atraccion->estado_operativo }}</li>
                 <li><strong>Estatura mínima:</strong> {{ $atraccion->altura_minima ? $atraccion->altura_minima . ' cm' : 'Sin restricción' }}</li>
-                <li><strong>Ubicación GPS:</strong> {{ $atraccion->ubicacion_gps ?? 'No disponible' }}</li>
             </ul>
             <p>{{ $atraccion->descripcion ?? 'Sin descripción adicional.' }}</p>
         </div>

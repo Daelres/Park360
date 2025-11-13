@@ -41,7 +41,6 @@ class SedeController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'codigo' => ['required', 'string', 'max:50', 'unique:sedes,codigo'],
             'nombre' => ['required', 'string', 'max:255'],
             'ciudad' => ['required', 'string', 'max:255'],
             'direccion' => ['required', 'string', 'max:255'],
@@ -50,6 +49,9 @@ class SedeController extends Controller
             'descripcion' => ['nullable', 'string'],
             'gerente' => ['nullable', 'string', 'max:255'],
         ]);
+
+        // Generate unique code from name
+        $validated['codigo'] = $this->generateUniqueCode($validated['nombre']);
 
         $sede = Sede::create($validated);
 
@@ -79,7 +81,6 @@ class SedeController extends Controller
     public function update(Request $request, Sede $sede): RedirectResponse
     {
         $validated = $request->validate([
-            'codigo' => ['required', 'string', 'max:50', 'unique:sedes,codigo,' . $sede->id],
             'nombre' => ['required', 'string', 'max:255'],
             'ciudad' => ['required', 'string', 'max:255'],
             'direccion' => ['required', 'string', 'max:255'],
@@ -103,5 +104,20 @@ class SedeController extends Controller
         return redirect()
             ->route('admin.sedes.index')
             ->with('status', 'Sede eliminada.');
+    }
+
+    private function generateUniqueCode(string $nombre): string
+    {
+        // Generate code from name: take first 3 letters + count + random suffix
+        $baseCode = strtoupper(substr($nombre, 0, 3));
+        $count = Sede::where('codigo', 'like', $baseCode . '%')->count();
+        $code = $baseCode . str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+
+        // Check if code already exists, if so add random suffix
+        while (Sede::where('codigo', $code)->exists()) {
+            $code = $baseCode . str_pad($count + 1, 3, '0', STR_PAD_LEFT) . strtoupper(chr(rand(65, 90)));
+        }
+
+        return $code;
     }
 }
