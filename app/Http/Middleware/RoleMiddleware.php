@@ -28,7 +28,11 @@ class RoleMiddleware
         }
 
         if (! $user || ! $user->hasAnyRole($allowedRoles->all())) {
-            abort(Response::HTTP_FORBIDDEN);
+            if ($request->expectsJson()) {
+                abort(Response::HTTP_FORBIDDEN);
+            }
+
+            return redirect()->route('public.home')->with('warning', 'No tienes permisos para acceder a esta sección.');
         }
 
         return $next($request);
