@@ -48,6 +48,12 @@ class DatabaseSeeder extends Seeder
             LecturaColaSeeder::class,
             MantenimientoSeeder::class,
             PagoSeeder::class,
+            ReembolsoSeeder::class,
+            SedesSeeder::class,
+            TareaOperativaSeeder::class,
+            TarifaSeeder::class,
+            TurnoSeeder::class,
+
         ]);
 
         try {
