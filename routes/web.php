@@ -11,9 +11,10 @@ Route::get('/', [PublicController::class, 'index'])->name('public.home');
 Route::get('/atracciones/{atraccion}', [PublicController::class, 'showAtraccion'])->name('public.atracciones.show');
 Route::get('/planes', [PublicController::class, 'plans'])->name('public.plans');
 
+Route::get('/pagos', [PaymentController::class, 'create'])->name('payments.create');
+Route::post('/pagos', [PaymentController::class, 'store'])->name('payments.store');
+
 Route::middleware('auth')->group(function () {
-    Route::get('/pagos', [PaymentController::class, 'create'])->name('payments.create');
-    Route::post('/pagos', [PaymentController::class, 'store'])->name('payments.store');
 
     Route::get('/dashboard', function () {
         return view('dashboard');
