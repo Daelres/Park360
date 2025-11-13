@@ -48,6 +48,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/')->with('logout_message', 'Has cerrado sesión correctamente.');
     }
 }
