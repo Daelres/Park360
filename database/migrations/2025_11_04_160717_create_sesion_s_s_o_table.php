@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sesion_s_s_o', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('usuario_id')->constrained('usuarios');
+            $table->foreignId('usuario_id')->constrained('users');
             $table->string('proveedor', 50);
             $table->string('oidc_sub', 191);
             $table->dateTime('exp_at');
