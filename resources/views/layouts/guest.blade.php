@@ -25,7 +25,7 @@
             .auth-container {
                 background: white;
                 border-radius: 1.25rem;
-                padding: 2.5rem;
+                padding: 2rem;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
                 border: 4px solid oklch(0.82 0.25 130);
             }
@@ -41,17 +41,9 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
-            <div class="auth-logo">
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current" style="color: white; width: 160px; height: 160px;" />
-                </a>
-            </div>
-
-            <div class="w-full sm:max-w-md mt-6 auth-container">
-                {{ $slot }}
-            </div>
+    <body class="font-sans antialiased" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="auth-container" style="max-width: 450px; width: 100%; margin: 0 auto; padding: 0 1rem;">
+            {{ $slot }}
         </div>
     </body>
 </html>
