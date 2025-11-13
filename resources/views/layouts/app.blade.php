@@ -8,31 +8,51 @@
     <title>{{ config('app.name', 'Park360') }}</title>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         /* Animaciones para parque de diversiones */
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         @keyframes bounce-gentle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
         }
 
         @keyframes wiggle {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-3deg); }
-            75% { transform: rotate(3deg); }
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(-3deg);
+            }
+            75% {
+                transform: rotate(3deg);
+            }
         }
 
         @keyframes pulse-scale {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         /* Variables del sistema de diseño del parque */
@@ -626,99 +646,103 @@
     @stack('styles')
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="{{ asset('images/ChatGPT Image 12 nov 2025, 23_37_27.png') }}" alt="Park360 Logo" />
-        </div>
-        <nav>
-            @php
-                $user = auth()->user();
-                $isAdmin = $user && method_exists($user, 'hasRole') ? $user->hasRole('admin') : false;
-            @endphp
+<header>
+    <div class="logo">
+        <img src="{{ asset('images/ChatGPT Image 12 nov 2025, 23_37_27.png') }}" alt="Park360 Logo"/>
+    </div>
+    <nav>
+        @php
+            $user = auth()->user();
+            $isAdmin = $user && method_exists($user, 'hasRole') && $user->hasRole('admin');
+        @endphp
 
-            @if ($isAdmin)
-                <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
-                <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
-            @else
-                <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
-                <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
-                <a href="{{ route('payments.create') }}"><i class="fas fa-shopping-cart"></i> Carrito</a>
-            @endif
-        </nav>
-        <div class="sidebar-footer">
-            @auth
-                <div class="user-card">
-                    <div class="user-card__avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-card__info">
-                        <p class="user-card__label">Conectado como</p>
-                        <p class="user-card__name">{{ auth()->user()->name }}</p>
-                        <p class="user-card__email">{{ auth()->user()->email }}</p>
-                    </div>
-                    <form method="POST" action="{{ route('logout') }}" class="user-card__actions">
-                        @csrf
-                        <button type="submit" class="auth-btn auth-btn--logout" title="Cerrar sesión">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </form>
+        @if ($isAdmin)
+            <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
+            <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
+            <a href="{{ route('admin.reportes.index') }}"><i class="fas fa-chart-bar"></i> Reportes</a>
+
+        @else
+            <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
+            <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
+            <a href="{{ route('payments.create') }}"><i class="fas fa-shopping-cart"></i> Carrito</a>
+            <a href="{{ route('admin.reportes.index') }}"><i class="fas fa-chart-bar"></i> Reportes</a>
+
+        @endif
+    </nav>
+    <div class="sidebar-footer">
+        @auth
+            <div class="user-card">
+                <div class="user-card__avatar">
+                    <i class="fas fa-user"></i>
                 </div>
-            @else
-                <div class="user-card user-card--guest">
-                    <div class="user-card__avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-card__info">
-                        <p class="user-card__label">Bienvenido</p>
-                        <p class="user-card__name">Iniciar sesión</p>
-                        <p class="user-card__email">Accede para administrar tu experiencia</p>
-                        @if (Route::has('register'))
-                            <div class="user-card__links">
-                                <a href="{{ route('register') }}">¿Aún sin cuenta? Regístrate</a>
-                            </div>
-                        @endif
-                    </div>
-                    @if (Route::has('login'))
-                        <div class="user-card__actions">
-                            <a href="{{ route('login') }}" class="auth-btn auth-btn--login" title="Iniciar sesión">
-                                <i class="fas fa-arrow-right-to-bracket"></i>
-                            </a>
+                <div class="user-card__info">
+                    <p class="user-card__label">Conectado como</p>
+                    <p class="user-card__name">{{ auth()->user()->name }}</p>
+                    <p class="user-card__email">{{ auth()->user()->email }}</p>
+                </div>
+                <form method="POST" action="{{ route('logout') }}" class="user-card__actions">
+                    @csrf
+                    <button type="submit" class="auth-btn auth-btn--logout" title="Cerrar sesión">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
+            </div>
+        @else
+            <div class="user-card user-card--guest">
+                <div class="user-card__avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-card__info">
+                    <p class="user-card__label">Bienvenido</p>
+                    <p class="user-card__name">Iniciar sesión</p>
+                    <p class="user-card__email">Accede para administrar tu experiencia</p>
+                    @if (Route::has('register'))
+                        <div class="user-card__links">
+                            <a href="{{ route('register') }}">¿Aún sin cuenta? Regístrate</a>
                         </div>
                     @endif
                 </div>
-            @endauth
+                @if (Route::has('login'))
+                    <div class="user-card__actions">
+                        <a href="{{ route('login') }}" class="auth-btn auth-btn--login" title="Iniciar sesión">
+                            <i class="fas fa-arrow-right-to-bracket"></i>
+                        </a>
+                    </div>
+                @endif
+            </div>
+        @endauth
 
-            @if (session('logout_message'))
-                <div class="sidebar-toast" role="status" aria-live="polite">
-                    {{ session('logout_message') }}
-                </div>
-            @endif
-        </div>
-    </header>
-    <main>
-        @if (session('status'))
-            <div class="flash-message">
-                {{ session('status') }}
+        @if (session('logout_message'))
+            <div class="sidebar-toast" role="status" aria-live="polite">
+                {{ session('logout_message') }}
             </div>
         @endif
-
-        @yield('content')
-    </main>
-
-    @stack('scripts')
-    @if (session('logout_message'))
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const toast = document.querySelector('.sidebar-toast');
-                if (!toast) {
-                    return;
-                }
-
-                setTimeout(() => {
-                    toast.classList.add('sidebar-toast--hide');
-                }, 3500);
-            });
-        </script>
+    </div>
+</header>
+<main>
+    @if (session('status'))
+        <div class="flash-message">
+            {{ session('status') }}
+        </div>
     @endif
+
+    @yield('content')
+</main>
+
+@stack('scripts')
+@if (session('logout_message'))
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toast = document.querySelector('.sidebar-toast');
+            if (!toast) {
+                return;
+            }
+
+            setTimeout(() => {
+                toast.classList.add('sidebar-toast--hide');
+            }, 3500);
+        });
+    </script>
+@endif
 </body>
 </html>
