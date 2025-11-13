@@ -11,6 +11,7 @@ use App\Http\Controllers\Payments\TestCheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\VisitCheckInController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -33,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::get('/checkout/success/{order:uuid}', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/failure', [CheckoutController::class, 'failure'])->name('checkout.failure');
+    Route::get('/orders/{order:uuid}/qr-code', [QrCodeController::class, 'show'])->name('orders.qr-code');
 
     Route::get('/visitas/scan', [VisitCheckInController::class, 'create'])->name('visit-scan.create');
     Route::post('/visitas/scan', [VisitCheckInController::class, 'store'])->name('visit-scan.store');

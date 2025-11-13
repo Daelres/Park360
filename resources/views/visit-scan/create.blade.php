@@ -27,7 +27,7 @@
             @csrf
             <div>
                 <label for="qr_code_token" style="display:block;font-weight:600;color:#2D1B69;margin-bottom:0.35rem;">Código de verificación</label>
-                <input type="text" id="qr_code_token" name="qr_code_token" value="{{ old('qr_code_token') }}" required style="width:100%;padding:0.75rem 1rem;border-radius:0.75rem;border:1px solid #d1d5db;" placeholder="Ej: ABC123XYZ" />
+                <input type="text" id="qr_code_token" name="qr_code_token" value="{{ old('qr_code_token') }}" required style="width:100%;padding:0.75rem 1rem;border-radius:0.75rem;border:1px solid #d1d5db;" placeholder="Ej: AB123-CD456-EF789-GH012" />
             </div>
 
             <div>

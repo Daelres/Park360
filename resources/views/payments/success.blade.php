@@ -65,8 +65,8 @@
             <aside class="card" style="position:sticky;top:1rem;display:flex;flex-direction:column;gap:1.25rem;padding:2rem;text-align:center;">
                 <div>
                     <span style="display:block;color:#6B5B8F;font-weight:600;margin-bottom:0.35rem;">Tu pase digital</span>
-                    @if($order->qr_code_path)
-                        <img src="{{ asset('storage/'.$order->qr_code_path) }}"
+                    @if($order->qr_code_token)
+                        <img src="{{ route('orders.qr-code', $order) }}"
                              alt="Código QR de la visita"
                              style="width:100%;max-width:260px;border-radius:1.25rem;border:1px solid rgba(147,181,245,0.25);background:white;padding:0.85rem;margin:0 auto 1rem;display:block;">
                     @else
@@ -81,8 +81,8 @@
                     <strong style="color:#2D1B69;font-size:1.25rem;">{{ $order->qr_code_token }}</strong>
                 </div>
 
-                @if($order->qr_code_path)
-                    <a href="{{ asset('storage/'.$order->qr_code_path) }}" class="btn btn-primary" download style="width:100%;">
+                @if($order->qr_code_token)
+                    <a href="{{ route('orders.qr-code', ['order' => $order, 'download' => 1]) }}" class="btn btn-primary" style="width:100%;">
                         Descargar QR
                     </a>
                 @endif

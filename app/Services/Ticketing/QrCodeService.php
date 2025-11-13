@@ -3,75 +3,89 @@
 namespace App\Services\Ticketing;
 
 use App\Models\TicketOrder;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use RuntimeException;
+use SimpleSoftwareIO\QrCode\Generator;
 
 class QrCodeService
 {
+    public function __construct(private readonly Generator $generator)
+    {
+    }
+
     public function ensureForOrder(TicketOrder $order): void
     {
+        $shouldSave = false;
+
+        if ($this->shouldRefreshToken($order)) {
+            $order->qr_code_token = $this->generateUniqueToken($order->id);
+            $shouldSave = true;
+        }
+
+        if (! blank($order->qr_code_path)) {
+            $order->qr_code_path = null;
+            $shouldSave = true;
+        }
+
+        if ($shouldSave) {
+            $order->save();
+        }
+    }
+
+    public function svgForOrder(TicketOrder $order): string
+    {
         if (blank($order->qr_code_token)) {
-            $order->qr_code_token = Str::upper(Str::random(12));
+            $this->ensureForOrder($order);
         }
 
-        $path = $this->renderPlaceholder($order->qr_code_token, $order->uuid);
-
-        if ($order->qr_code_path !== $path) {
-            $order->qr_code_path = $path;
-        }
-
-        $order->save();
+        return $this->generator
+            ->format('svg')
+            ->size(320)
+            ->margin(0)
+            ->color(45, 27, 105)
+            ->backgroundColor(255, 255, 255)
+            ->generate($order->qr_code_token);
     }
 
-    private function renderPlaceholder(string $token, string $uuid): string
+    private function shouldRefreshToken(TicketOrder $order): bool
     {
-        $disk = Storage::disk('public');
-        $directory = 'qr-codes';
-
-        if (! $disk->exists($directory)) {
-            $disk->makeDirectory($directory);
+        if (blank($order->qr_code_token)) {
+            return true;
         }
 
-        $filename = $directory.'/'.$uuid.'.svg';
-
-        $pattern = $this->buildPattern($token);
-
-        $svg = <<<SVG
-<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 260">
-    <rect width="240" height="240" fill="#ffffff"/>
-    {$pattern}
-    <rect y="240" width="240" height="20" fill="#2D1B69"/>
-    <text x="120" y="254" font-family="'Courier New', monospace" font-size="12" fill="#ffffff" text-anchor="middle">QR {$token}</text>
-</svg>
-SVG;
-
-        $disk->put($filename, $svg);
-
-        return $filename;
+        return TicketOrder::query()
+            ->where('qr_code_token', $order->qr_code_token)
+            ->whereKeyNot($order->id)
+            ->exists();
     }
 
-    private function buildPattern(string $token): string
+    private function generateUniqueToken(?int $ignoreId = null): string
     {
-        $hash = hash('sha256', $token);
-        $cells = 21;
-        $cellSize = 10;
-        $padding = 15;
+        $attempts = 0;
 
-        $fragments = [];
+        do {
+            $attempts++;
+            $candidate = $this->buildTokenString();
+            $exists = TicketOrder::query()
+                ->where('qr_code_token', $candidate)
+                ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
+                ->exists();
+        } while ($exists && $attempts < 10);
 
-        for ($y = 0; $y < $cells; $y++) {
-            for ($x = 0; $x < $cells; $x++) {
-                $index = ($y * $cells + $x) % strlen($hash);
-                $value = hexdec($hash[$index]);
-
-                if ($value % 2 === 0) {
-                    $posX = $padding + ($x * $cellSize);
-                    $posY = $padding + ($y * $cellSize);
-                    $fragments[] = sprintf('<rect x="%d" y="%d" width="%d" height="%d" fill="#2D1B69"/>', $posX, $posY, $cellSize, $cellSize);
-                }
-            }
+        if ($exists) {
+            throw new RuntimeException('No fue posible generar un token de QR único tras múltiples intentos.');
         }
 
-        return implode('\n    ', $fragments);
+        return $candidate;
+    }
+
+    private function buildTokenString(): string
+    {
+        $raw = Str::upper(Str::uuid()->toString().Str::random(12));
+        $raw = preg_replace('/[^A-Z0-9]/', '', $raw ?? '');
+
+        $segments = str_split(substr($raw, 0, 20), 5);
+
+        return implode('-', $segments);
     }
 }
