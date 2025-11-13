@@ -64,7 +64,7 @@
     @enderror
 </div>
 <div class="field">
-    <label for="imagen_url">Imagen</label>
+    <label for="imagen_url">Imagen (url)</label>
     <input type="url" name="imagen_url" id="imagen_url" value="{{ old('imagen_url', optional($atraccion)->imagen_url ?? '') }}">
     @error('imagen_url')
         <small style="color:#dc2626;">{{ $message }}</small>
