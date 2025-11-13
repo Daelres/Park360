@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             UsersSeeder::class,
             RolSeeder::class,
             PermisoSeeder::class,
+            SedesSeeder::class,
             ZonaSeeder::class,
             AtraccionSeeder::class,
             VisitDateSeeder::class,
