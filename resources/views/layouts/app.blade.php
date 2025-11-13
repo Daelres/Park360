@@ -7,48 +7,86 @@
 
     <title>{{ config('app.name', 'Park360') }}</title>
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        :root {
-            --primary: #93B5F5;
-            --primary-dark: #7B9FF5;
-            --secondary: #AF93F5;
-            --tertiary: #9396F5;
-            --accent: #FF6B9D;
-            --success: #4ECDC4;
-            --warning: #FFE66D;
-            --gray-100: #F5F3FF;
-            --gray-200: #E8E4F3;
-            --gray-600: #6B5B8F;
-            --dark: #2D1B69;
+        /* Animaciones para parque de diversiones */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
-        * { box-sizing: border-box; }
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+
+        @keyframes pulse-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Variables del sistema de diseño del parque */
+        :root {
+            /* Purple primary */
+            --primary: oklch(0.55 0.25 280);
+            --primary-dark: oklch(0.50 0.25 280);
+            /* Lime green secondary */
+            --secondary: oklch(0.82 0.25 130);
+            --secondary-dark: oklch(0.78 0.25 130);
+            /* Orange accent */
+            --accent: oklch(0.7 0.25 40);
+            --accent-dark: oklch(0.65 0.25 40);
+            /* Additional colors */
+            --success: oklch(0.82 0.25 130);
+            --warning: oklch(0.88 0.22 100);
+            --muted: oklch(0.96 0.03 300);
+            --muted-dark: oklch(0.9 0.02 280);
+            --text-dark: oklch(0.2 0.05 280);
+            --text-muted: oklch(0.5 0.05 280);
+            --border: oklch(0.9 0.02 280);
+            --radius: 1.25rem;
+        }
+
+        * { 
+            box-sizing: border-box; 
+        }
 
         body {
             margin: 0;
-            font-family: 'Nunito', Arial, sans-serif;
-            background: linear-gradient(135deg, #F5F3FF 0%, #F0E6FF 100%);
-            color: #2D1B69;
+            font-family: 'Fredoka', 'Nunito', Arial, sans-serif;
+            background: oklch(0.99 0.015 85);
+            color: var(--text-dark);
             display: flex;
             min-height: 100vh;
         }
 
-        a { color: inherit; text-decoration: none; }
+        a { 
+            color: inherit; 
+            text-decoration: none; 
+        }
 
+        /* Header/Sidebar con estilo de parque */
         header {
-            background: linear-gradient(135deg, white 0%, #F5F3FF 100%);
-            border-right: 3px solid var(--primary);
-            padding: 2rem 1.5rem;
+            background: var(--primary);
+            padding: 2.5rem 2rem;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            width: 260px;
+            width: 320px;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
-            box-shadow: 2px 0 20px rgba(147, 181, 245, 0.15);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
         }
 
         .logo {
@@ -57,12 +95,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: bounce-gentle 3s ease-in-out infinite;
         }
 
         .logo svg {
             width: 100%;
             height: auto;
-            max-width: 200px;
+            max-width: 240px;
+            filter: drop-shadow(3px 3px 0px rgba(0, 0, 0, 0.2));
         }
 
         nav {
@@ -74,87 +114,106 @@
         nav a {
             margin-left: 0;
             margin-bottom: 0.75rem;
-            font-weight: 600;
-            color: var(--gray-600);
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
+            font-weight: 700;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            font-size: 1rem;
         }
 
         nav a i {
-            width: 20px;
+            width: 24px;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
         nav a:hover {
-            color: white;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            transform: translateX(4px);
-            box-shadow: 0 4px 15px rgba(147, 181, 245, 0.3);
+            color: var(--text-dark);
+            background: var(--secondary);
+            transform: translateX(8px) scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         main {
             padding: 2rem;
-            margin-left: 260px;
+            margin-left: 320px;
             flex: 1;
-            width: calc(100% - 260px);
+            width: calc(100% - 320px);
         }
 
         .card {
             background: white;
-            border-radius: 1.2rem;
+            border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: 0 10px 40px rgba(147, 181, 245, 0.12);
-            border: 1px solid rgba(147, 181, 245, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--border);
             transition: all 0.3s ease;
         }
 
         .card:hover {
-            box-shadow: 0 15px 50px rgba(147, 181, 245, 0.18);
-            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            border-color: var(--secondary);
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            background: var(--primary);
             color: white;
-            font-weight: 700;
+            font-weight: 800;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(147, 181, 245, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
 
         .btn.secondary {
-            background: linear-gradient(135deg, var(--gray-200) 0%, var(--gray-100) 100%);
-            color: var(--dark);
-            box-shadow: 0 2px 8px rgba(147, 181, 245, 0.1);
+            background: var(--secondary);
+            color: var(--text-dark);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn.accent {
+            background: var(--accent);
+            color: white;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(147, 181, 245, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         .btn.secondary:hover {
-            box-shadow: 0 4px 15px rgba(147, 181, 245, 0.2);
+            background: var(--secondary-dark);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn.accent:hover {
+            background: var(--accent-dark);
         }
 
         .flash-message {
-            background: #ecfccb;
-            color: #3f6212;
-            border: 1px solid #a3e635;
+            background: var(--secondary);
+            color: var(--text-dark);
+            border: 3px solid var(--accent);
             padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
+            border-radius: var(--radius);
             margin-bottom: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         form .field {
@@ -163,26 +222,37 @@
 
         form label {
             display: block;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 0.5rem;
+            color: var(--text-dark);
         }
 
         form input,
         form select,
         form textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid var(--gray-200);
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
             font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        form input:focus,
+        form select:focus,
+        form textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(147, 105, 245, 0.1);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             background: white;
-            border-radius: 1rem;
+            border-radius: var(--radius);
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
         th, td {
@@ -191,12 +261,20 @@
         }
 
         th {
-            background: var(--gray-100);
+            background: var(--primary);
+            color: white;
             font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         tr + tr {
-            border-top: 1px solid var(--gray-200);
+            border-top: 2px solid var(--border);
+        }
+
+        tbody tr:hover {
+            background: var(--muted);
         }
 
         .table-actions {
@@ -206,13 +284,25 @@
 
         .badge {
             display: inline-flex;
-            padding: 0.35rem 0.75rem;
-            border-radius: 9999px;
-            background: linear-gradient(135deg, rgba(147, 181, 245, 0.15) 0%, rgba(175, 147, 245, 0.15) 100%);
-            color: var(--dark);
-            font-weight: 700;
-            font-size: 0.85rem;
-            border: 1px solid rgba(147, 181, 245, 0.3);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            background: var(--accent);
+            color: white;
+            font-weight: 800;
+            font-size: 0.8rem;
+            border: 2px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.success {
+            background: var(--success);
+            color: var(--text-dark);
+        }
+
+        .badge.warning {
+            background: var(--warning);
+            color: var(--text-dark);
         }
 
         .grid {
@@ -229,29 +319,32 @@
         }
 
         .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--tertiary) 100%);
-            border-radius: 1.5rem;
+            background: var(--primary);
+            border-radius: var(--radius);
             padding: 3rem 2rem;
-            box-shadow: 0 30px 80px rgba(147, 181, 245, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 2rem;
             align-items: center;
             margin-bottom: 2rem;
             color: white;
+            border: 4px solid var(--accent);
         }
 
         .hero h1 {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2), 6px 6px 0px rgba(0, 0, 0, 0.1);
         }
 
         .hero p {
-            font-size: 1.05rem;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: white;
+            font-weight: 500;
         }
 
         .select-inline {
@@ -265,25 +358,66 @@
             min-width: 200px;
         }
 
+        /* Utilidades de animación */
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-bounce-gentle {
+            animation: bounce-gentle 2s ease-in-out infinite;
+        }
+
+        .animate-wiggle {
+            animation: wiggle 1s ease-in-out infinite;
+        }
+
+        .animate-pulse-scale {
+            animation: pulse-scale 2s ease-in-out infinite;
+        }
+
+        /* Efectos de texto 3D */
+        .text-3d-primary {
+            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1), 6px 6px 0px rgba(0, 0, 0, 0.05);
+        }
+
+        .text-3d-bold {
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2), 4px 4px 0px rgba(0, 0, 0, 0.1), 6px 6px 0px rgba(0, 0, 0, 0.05);
+        }
+
         @media (max-width: 768px) {
             header {
                 width: 100%;
                 height: auto;
                 position: static;
                 border-right: none;
-                border-bottom: 1px solid var(--gray-200);
+                border-bottom: 5px solid var(--accent);
                 flex-direction: row;
                 align-items: center;
                 justify-content: space-between;
             }
 
+            .logo {
+                animation: none;
+            }
+
             nav {
                 flex-direction: row;
+                flex-wrap: wrap;
             }
 
             nav a {
                 margin-bottom: 0;
-                margin-left: 1rem;
+                margin-left: 0.5rem;
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            nav a:hover {
+                transform: translateY(-3px) scale(1.05);
+            }
+
+            header {
+                border-bottom: none;
             }
 
             main {
@@ -368,11 +502,11 @@
             </svg>
         </div>
         <nav>
-            <a href="{{ route('public.home') }}"><i class="fas fa-star"></i> Atracciones</a>
-            <a href="{{ route('public.plans') }}"><i class="fas fa-ticket"></i> Entradas</a>
-            <a href="{{ route('payments.create') }}"><i class="fas fa-credit-card"></i> Pagos</a>
-            <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-building"></i> Admin Sedes</a>
-            <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-sliders-h"></i> Admin Atracciones</a>
+            <a href="{{ route('public.home') }}"><i class="fas fa-rocket"></i> Atracciones</a>
+            <a href="{{ route('public.plans') }}"><i class="fas fa-ticket-alt"></i> Entradas</a>
+            <a href="{{ route('payments.create') }}"><i class="fas fa-wallet"></i> Pagos</a>
+            <a href="{{ route('admin.sedes.index') }}"><i class="fas fa-map-marked-alt"></i> Admin Sedes</a>
+            <a href="{{ route('admin.atracciones.index') }}"><i class="fas fa-gamepad"></i> Admin Atracciones</a>
         </nav>
     </header>
     <main>

@@ -1,3 +1,118 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Sistema de diseño Park360 - Parque de Diversiones */
+:root {
+  /* Purple primary */
+  --primary: oklch(0.55 0.25 280);
+  --primary-dark: oklch(0.50 0.25 280);
+  --primary-foreground: oklch(1 0 0);
+  
+  /* Lime green secondary */
+  --secondary: oklch(0.82 0.25 130);
+  --secondary-dark: oklch(0.78 0.25 130);
+  --secondary-foreground: oklch(0.2 0.05 280);
+  
+  /* Orange accent */
+  --accent: oklch(0.7 0.25 40);
+  --accent-dark: oklch(0.65 0.25 40);
+  --accent-foreground: oklch(1 0 0);
+  
+  /* Colores adicionales */
+  --success: oklch(0.82 0.25 130);
+  --warning: oklch(0.88 0.22 100);
+  --destructive: oklch(0.577 0.245 27.325);
+  
+  /* Neutrales */
+  --background: oklch(0.99 0.015 85);
+  --foreground: oklch(0.2 0.05 280);
+  --muted: oklch(0.96 0.03 300);
+  --muted-dark: oklch(0.9 0.02 280);
+  --muted-foreground: oklch(0.5 0.05 280);
+  --border: oklch(0.9 0.02 280);
+  --input: oklch(0.9 0.02 280);
+  --ring: oklch(0.55 0.25 280);
+  
+  /* Border radius */
+  --radius: 1.25rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Chart colors para visualizaciones */
+  --chart-1: oklch(0.55 0.25 280); /* Purple */
+  --chart-2: oklch(0.82 0.25 130); /* Lime green */
+  --chart-3: oklch(0.7 0.25 40); /* Orange */
+  --chart-4: oklch(0.68 0.15 240); /* Blue */
+  --chart-5: oklch(0.75 0.22 350); /* Hot pink */
+  --chart-6: oklch(0.7 0.18 190); /* Turquoise */
+  --chart-7: oklch(0.88 0.22 100); /* Yellow */
+}
+
+/* Animaciones del parque de diversiones */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Clases de utilidad para animaciones */
+@layer utilities {
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-bounce-gentle {
+    animation: bounce-gentle 2s ease-in-out infinite;
+  }
+  
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+  }
+  
+  .animate-pulse-scale {
+    animation: pulse-scale 2s ease-in-out infinite;
+  }
+  
+  /* Efectos de texto 3D */
+  .text-3d-primary {
+    text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1), 6px 6px 0px rgba(0, 0, 0, 0.05);
+  }
+  
+  .text-3d-bold {
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2), 4px 4px 0px rgba(0, 0, 0, 0.1), 6px 6px 0px rgba(0, 0, 0, 0.05);
+  }
+  
+  .text-outline-white {
+    text-shadow: 
+      -2px -2px 0 #fff, 2px -2px 0 #fff, 
+      -2px 2px 0 #fff, 2px 2px 0 #fff,
+      -3px 0 0 #fff, 3px 0 0 #fff, 
+      0 -3px 0 #fff, 0 3px 0 #fff;
+  }
+  
+  .text-outline-black {
+    text-shadow: 
+      -2px -2px 0 #000, 2px -2px 0 #000, 
+      -2px 2px 0 #000, 2px 2px 0 #000,
+      -3px 0 0 #000, 3px 0 0 #000, 
+      0 -3px 0 #000, 0 3px 0 #000;
+  }
+}
