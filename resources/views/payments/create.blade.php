@@ -10,7 +10,13 @@
                 @csrf
                 <div class="field">
                     <label for="nombre">Nombre completo</label>
-                    <input type="text" name="nombre" id="nombre" value="{{ old('nombre') }}" required>
+                    <input
+                        type="text"
+                        name="nombre"
+                        id="nombre"
+                        value="{{ old('nombre', $customer['name'] ?? '') }}"
+                        required
+                    >
                     @error('nombre')
                         <small style="color:#dc2626;">{{ $message }}</small>
                     @enderror
@@ -18,7 +24,13 @@
 
                 <div class="field">
                     <label for="correo">Correo electrónico</label>
-                    <input type="email" name="correo" id="correo" value="{{ old('correo') }}" required>
+                    <input
+                        type="email"
+                        name="correo"
+                        id="correo"
+                        value="{{ old('correo', $customer['email'] ?? '') }}"
+                        required
+                    >
                     @error('correo')
                         <small style="color:#dc2626;">{{ $message }}</small>
                     @enderror
