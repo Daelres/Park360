@@ -2,54 +2,109 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\RedirectResponse;
+use App\Models\AddonProduct;
+use App\Models\TicketType;
+use App\Models\VisitDate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
     public function create(Request $request): View
     {
-        $preselectedPlan = $request->string('plan')->toString();
+        $visitDates = VisitDate::query()
+            ->where('is_active', true)
+            ->whereDate('visit_date', '>=', now()->toDateString())
+            ->orderBy('visit_date')
+            ->get();
 
-        $customer = null;
-        if ($request->user()) {
-            $customer = [
-                'name' => $request->user()->name,
-                'email' => $request->user()->email,
-            ];
+        $ticketTypes = TicketType::query()->orderBy('base_price')->get();
+        $addonProducts = AddonProduct::query()->orderBy('price')->get();
+
+        $ticketCatalog = $ticketTypes
+            ->map(fn (TicketType $ticket) => [
+                'id' => $ticket->id,
+                'name' => $ticket->name,
+                'description' => $ticket->description,
+                'price' => $ticket->base_price,
+            ])->values()->toArray();
+
+        $addonCatalog = $addonProducts
+            ->map(fn (AddonProduct $addon) => [
+                'id' => $addon->id,
+                'name' => $addon->name,
+                'description' => $addon->description,
+                'price' => $addon->price,
+            ])->values()->toArray();
+
+        $selectedVisitDate = null;
+
+        if ($request->filled('date_id')) {
+            $selectedVisitDate = $visitDates->firstWhere('id', $request->integer('date_id'));
         }
 
+        if (! $selectedVisitDate && $request->filled('visit_date')) {
+            $requestedDate = Carbon::parse($request->string('visit_date'))->toDateString();
+            $selectedVisitDate = $visitDates->first(fn (VisitDate $date) => $date->visit_date->toDateString() === $requestedDate);
+        }
+
+        if (! $selectedVisitDate && $visitDates->isNotEmpty()) {
+            $selectedVisitDate = $visitDates->first();
+        }
+
+        $selectedDateId = $selectedVisitDate?->id;
+        $selectedDateValue = $selectedVisitDate?->visit_date->toDateString();
+        $selectedDateLabel = $selectedVisitDate ? $this->formatDateLabel($selectedVisitDate) : null;
+
+        $datesForView = $visitDates->map(fn (VisitDate $date) => [
+            'id' => $date->id,
+            'value' => $date->visit_date->toDateString(),
+            'label' => $this->formatDateLabel($date),
+        ])->values()->toArray();
+
         return view('payments.create', [
-            'plan' => $preselectedPlan,
-            'customer' => $customer,
+            'visitDates' => $datesForView,
+            'selectedDateId' => $selectedDateId,
+            'selectedDateValue' => $selectedDateValue,
+            'selectedDateLabel' => $selectedDateLabel,
+            'ticketTypes' => $ticketTypes,
+            'addonProducts' => $addonProducts,
+            'ticketCatalog' => $ticketCatalog,
+            'addonCatalog' => $addonCatalog,
+            'flashSuccess' => session('checkout_success'),
+            'flashError' => session('checkout_error'),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function storeVisitDate(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'nombre' => ['required', 'string', 'max:255'],
-            'correo' => ['required', 'email', 'max:255'],
-            'plan' => ['required', 'string', 'max:255'],
-            'monto' => ['required', 'numeric', 'min:0'],
-            'metodo_pago' => ['required', 'string', 'max:255'],
+            'visit_date' => ['required', 'date', 'after_or_equal:today'],
+        ], [
+            'visit_date.required' => 'Selecciona una fecha válida.',
+            'visit_date.date' => 'Selecciona una fecha válida.',
+            'visit_date.after_or_equal' => 'La fecha debe ser hoy o posterior.',
         ]);
 
-        if ($request->user()) {
-            $validated['nombre'] = $request->user()->name;
-            $validated['correo'] = $request->user()->email;
-        } else {
-            $validated['nombre'] = $request->string('nombre')->toString();
-            $validated['correo'] = $request->string('correo')->toString();
-        }
+        $dateValue = Carbon::parse($validated['visit_date'])->startOfDay();
 
-        // La integración con PayU se implementará en el futuro.
-        // Por ahora, se deja registro en el log para facilitar la futura implementación.
-        logger()->info('Solicitud de pago pendiente de enviar a PayU', $validated);
+        $visitDate = VisitDate::firstOrCreate(
+            ['visit_date' => $dateValue->toDateString()],
+            ['is_active' => true]
+        );
 
-        return redirect()
-            ->route('payments.create')
-            ->with('status', 'Solicitud registrada. En breve serás redirigido a PayU para completar el pago.');
+        return response()->json([
+            'id' => $visitDate->id,
+            'value' => $visitDate->visit_date->toDateString(),
+            'label' => $this->formatDateLabel($visitDate),
+        ]);
+    }
+
+    private function formatDateLabel(VisitDate $date): string
+    {
+        return Str::ucfirst($date->visit_date->locale('es')->isoFormat('dddd D [de] MMMM YYYY'));
     }
 }

@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -68,24 +69,24 @@ class User extends Authenticatable
         $this->attributes['name'] = $value;
     }
 
-    public function sesionesSSO(): HasMany
-    {
-        return $this->hasMany(SesionSSO::class, 'user_id');
-    }
-
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Rol::class, 'user_rol', 'user_id', 'rol_id')->withTimestamps();
+        return $this->belongsToMany(Rol::class, 'user_rol', 'usuario_id', 'rol_id')->withTimestamps();
+    }
+
+    public function sesionesSSO(): HasMany
+    {
+        return $this->hasMany(SesionSSO::class, 'usuario_id');
     }
 
     public function empleado(): HasOne
     {
-        return $this->hasOne(Empleado::class, 'user_id');
+        return $this->hasOne(Empleado::class, 'usuario_id');
     }
 
     public function preferenciasNotificacion(): HasMany
     {
-        return $this->hasMany(PreferenciaNotificacion::class, 'user_id');
+        return $this->hasMany(PreferenciaNotificacion::class, 'usuario_id');
     }
 
     public function estadosAtraccionRegistrados(): HasMany
