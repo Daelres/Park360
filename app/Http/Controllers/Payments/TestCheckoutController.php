@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Payments;
 
 use App\Http\Controllers\Controller;
+use App\Support\Currency;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -11,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TestCheckoutController extends Controller
 {
-    private const TEST_AMOUNT = 50000; // COP, currency without decimal places
+    private const TEST_AMOUNT = 50000; // Stored in major units (COP)
 
     public function show(Request $request): View
     {
@@ -31,11 +32,12 @@ class TestCheckoutController extends Controller
             'cantidad' => ['nullable', 'integer', 'min:1', 'max:5'],
         ]);
 
-        $user = $request->user();
-        $customerId = $user->createOrGetStripeCustomer();
+    $user = $request->user();
+    $customerId = $user->createOrGetStripeCustomer();
 
-        $quantity = (int) ($request->input('cantidad', 1));
-        $unitAmount = self::TEST_AMOUNT;
+    $currency = $this->stripeCurrency();
+    $quantity = (int) ($request->input('cantidad', 1));
+    $unitAmount = self::TEST_AMOUNT;
 
         try {
             $session = Cashier::stripe()->checkout->sessions->create([
@@ -51,8 +53,8 @@ class TestCheckoutController extends Controller
                 'line_items' => [[
                     'quantity' => $quantity,
                     'price_data' => [
-                        'currency' => 'cop',
-                        'unit_amount' => $unitAmount,
+                        'currency' => $currency,
+                        'unit_amount' => Currency::toStripeAmount($unitAmount, $currency),
                         'product_data' => [
                             'name' => 'Entrada de prueba Park360',
                             'description' => 'Flujo de integración con Stripe Checkout embebido',
@@ -93,5 +95,10 @@ class TestCheckoutController extends Controller
             'session' => $session,
             'paymentIntent' => $paymentIntent,
         ]);
+    }
+
+    private function stripeCurrency(): string
+    {
+        return strtolower(config('cashier.currency', env('CASHIER_CURRENCY', 'usd')));
     }
 }

@@ -8,6 +8,7 @@ use App\Models\TicketOrderItem;
 use App\Models\TicketType;
 use App\Models\VisitDate;
 use App\Services\Ticketing\QrCodeService;
+use App\Support\Currency;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,8 @@ class CheckoutController extends Controller
 
         $addonsPayload = collect($validated['addons'] ?? [])
             ->filter(fn ($item) => ($item['quantity'] ?? 0) > 0);
+
+        $currency = $this->stripeCurrency();
 
         $visitDate = VisitDate::findOrFail($validated['visit_date_id']);
         $user = $request->user();
@@ -90,8 +93,8 @@ class CheckoutController extends Controller
                 $lineItems[] = [
                     'quantity' => $quantity,
                     'price_data' => [
-                        'currency' => 'cop',
-                        'unit_amount' => $ticket->base_price,
+                        'currency' => $currency,
+                        'unit_amount' => Currency::toStripeAmount($ticket->base_price, $currency),
                         'product' => $ticket->stripe_product_id,
                     ],
                 ];
@@ -121,8 +124,8 @@ class CheckoutController extends Controller
                 $lineItems[] = [
                     'quantity' => $quantity,
                     'price_data' => [
-                        'currency' => 'cop',
-                        'unit_amount' => $addon->price,
+                        'currency' => $currency,
+                        'unit_amount' => Currency::toStripeAmount($addon->price, $currency),
                         'product' => $addon->stripe_product_id,
                     ],
                 ];
@@ -180,6 +183,11 @@ class CheckoutController extends Controller
         return response()->json([
             'redirect_url' => route('checkout.show', ['order' => $order->uuid]),
         ]);
+    }
+
+    private function stripeCurrency(): string
+    {
+        return strtolower(config('cashier.currency', env('CASHIER_CURRENCY', 'usd')));
     }
 
     public function show(Request $request): View|RedirectResponse
